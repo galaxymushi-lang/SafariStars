@@ -68,13 +68,6 @@
     { id: "hearts_refill", name: "Hearts Refill", desc: "Refill all hearts", cost: 30, icon: "❤️" },
     { id: "xp_boost", name: "XP Boost 30m", desc: "Double XP for 30 min", cost: 80, icon: "⚡" },
   ];
-  const SAMPLE_STUDENTS = [
-    { name: "Asha", lessons: 5, words: 18, score: 82 },
-    { name: "Juma", lessons: 3, words: 12, score: 75 },
-    { name: "Fatima", lessons: 7, words: 24, score: 91 },
-    { name: "Ibrahim", lessons: 2, words: 8, score: 68 },
-    { name: "Neema", lessons: 6, words: 21, score: 88 },
-  ];
   const MASCOT_MSGS = {
     idle: ["Twende! Pick a lesson.","You can do it!","Time to learn!","Keep your streak!","New adventure!"],
     correct: ["Sawa! Great!","Excellent!","You got it!","Keep going!","Amazing!"],
@@ -595,7 +588,9 @@
   }
   function renderStudentList() {
     if (state.user.role === "teacher") {
-      D.studentList.innerHTML = SAMPLE_STUDENTS.map(s => `<div class="student-row"><span class="student-name">${s.name}</span><span class="student-stat">${s.lessons} lessons · ${s.words} words · ${s.score}%</span></div>`).join("");
+      const all = Object.values(getUsers()).map(u => ({ name: u.name, lessons: u.stats?.lessonsDone || 0, words: u.stats?.wordsLearned || 0, correct: u.stats?.correct || 0 }));
+      all.sort((a, b) => b.lessons - a.lessons);
+      D.studentList.innerHTML = all.map(s => `<div class="student-row"><span class="student-name">${s.name}</span><span class="student-stat">${s.lessons} lessons · ${s.words} words · ${s.correct} correct</span></div>`).join("");
     } else {
       D.studentList.innerHTML = `<div class="student-row"><span class="student-name">${state.user.name}</span><span class="student-stat">${state.stats.lessonsDone} lessons · ${state.stats.wordsLearned} words · ${state.stats.correct} correct</span></div>`;
     }
@@ -682,10 +677,10 @@
 
   // ── League ──
   function renderLeague() {
-    const l = [{name:state.user.name,stars:state.stars}];
-    SAMPLE_STUDENTS.forEach(s=>l.push({name:s.name,stars:s.score*2}));
-    l.sort((a,b)=>b.stars-a.stars).slice(0,8);
-    D.leagueList.innerHTML = l.map(r=>`<li><span class="league-name">${r.name}</span><span class="league-stars">${r.stars}★</span></li>`).join("");
+    const users = getUsers();
+    const list = Object.values(users).map(u => ({ name: u.name, xp: u.xp || 0, stars: u.stars || 0 }));
+    list.sort((a, b) => b.xp - a.xp);
+    D.leagueList.innerHTML = list.map(r => `<li><span class="league-name">${r.name}</span><span class="league-stars">${r.xp} XP</span></li>`).join("");
   }
 
   // ── Badges ──
