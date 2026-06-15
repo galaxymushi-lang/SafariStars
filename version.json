@@ -1,0 +1,30 @@
+{
+  "version": "2.1.0",
+  "releaseDate": "2026-06-15",
+  "updateUrl": "https://YOUR_USERNAME.github.io/SafariStars/",
+  "changelog": [
+    "Dark mode & high contrast",
+    "Keyboard shortcuts (1-4, M/P/W/R, D)",
+    "Exercise timer (configurable)",
+    "Shuffle exercises option",
+    "PIN lock for settings",
+    "Accessibility: font size controls, ARIA",
+    "PWA: install as app, offline support",
+    "Copy to clipboard for feedback",
+    "Local notifications reminder",
+    "12 lessons total (+4 new)",
+    "Fixed: speech fallback for unsupported browsers",
+    "Fixed: better mobile responsive",
+    "Fixed: streak tracking on activity"
+  ],
+  "files": [
+    "index.html",
+    "styles.css",
+    "lessons.js",
+    "app.js",
+    "manifest.json",
+    "sw.js",
+    "icons/icon-192.svg",
+    "icons/icon-512.svg"
+  ]
+}

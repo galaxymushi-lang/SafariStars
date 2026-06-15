@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Safari Stars English</title>
+    <meta name="description" content="Learn English on a Tanzanian adventure - interactive lessons for kids" />
+    <meta name="theme-color" content="#F5A623" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="icons/icon-192.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icons/icon-192.svg" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <section class="auth-screen" id="authScreen" role="dialog" aria-label="Login screen">
+      <div class="auth-card">
+        <div class="brand-lockup">
+          <div class="brand-mark" aria-hidden="true">S</div>
+          <div>
+            <strong>Safari Stars</strong>
+            <span>English Adventure</span>
+          </div>
+        </div>
+        <div>
+          <p class="eyebrow">Login / Ingia</p>
+          <h1>Start your English safari.</h1>
+          <p>Unda akaunti ya mtoto, mzazi, au mwalimu. Progress itahifadhiwa kwenye browser hii.</p>
+        </div>
+        <form class="login-form" id="loginForm" aria-label="Login form">
+          <label>
+            Name / Jina
+            <input id="loginName" name="name" autocomplete="name" required minlength="2" placeholder="Asha" aria-required="true" />
+          </label>
+          <label>
+            Role / Nafasi
+            <select id="loginRole" name="role">
+              <option value="child">Child / Mtoto</option>
+              <option value="parent">Parent / Mzazi</option>
+              <option value="teacher">Teacher / Mwalimu</option>
+            </select>
+          </label>
+          <button class="primary-button" type="submit">Enter App</button>
+        </form>
+        <div class="saved-users" id="savedUsers" role="list" aria-label="Saved accounts"></div>
+      </div>
+    </section>
+
+    <div class="app-shell" id="main-content">
+      <aside class="left-panel" role="navigation" aria-label="Main navigation">
+        <div class="brand-lockup" aria-label="Safari Stars English">
+          <div class="brand-mark" aria-hidden="true">S</div>
+          <div>
+            <strong>Safari Stars</strong>
+            <span>English Adventure</span>
+          </div>
+        </div>
+
+        <nav class="side-nav" aria-label="Navigation">
+          <button class="nav-button is-active" data-view="map" title="Adventure map (M)">
+            <span>Map</span>
+          </button>
+          <button class="nav-button" data-view="practice" title="Practice zone (P)">
+            <span>Practice</span>
+          </button>
+          <button class="nav-button" data-view="vocab" title="Vocabulary notebook (W)">
+            <span>Words</span>
+          </button>
+          <button class="nav-button" data-view="parent" title="Parent and teacher report (R)">
+            <span>Report</span>
+          </button>
+        </nav>
+
+        <section class="profile-card" aria-label="User profile">
+          <div class="avatar" aria-hidden="true">A</div>
+          <div>
+            <strong id="learnerName">Asha</strong>
+            <span><b id="roleLabel">Child</b> - Level <b id="profileLevel">1</b></span>
+          </div>
+        </section>
+        <button class="nav-button logout-button" id="logoutButton">Logout</button>
+      </aside>
+
+      <main class="phone-stage" role="main" aria-live="polite">
+        <header class="top-bar" role="toolbar" aria-label="Status bar">
+          <div class="stat-chip flame" title="Daily streak">Moto <b id="streakValue">0</b></div>
+          <div class="stat-chip coin" title="Stars">Stars <b id="starsValue">30</b></div>
+          <div class="stat-chip xp-chip" title="Experience Points">XP <b id="xpValue">0</b></div>
+          <div class="stat-chip hearts" id="heartsDisplay" title="Lives" aria-label="Hearts remaining"></div>
+          <button class="stat-chip" id="darkModeToggle" title="Toggle dark mode (D)" aria-label="Toggle dark mode">&#9790;</button>
+          <button class="stat-chip account-chip" id="topLogoutButton" title="Switch account">Account</button>
+        </header>
+
+        <section class="xp-bar-wrap" aria-label="Experience progress">
+          <div class="xp-bar-label"><span id="xpLevelBadge">Lv 1</span> <span id="xpProgressText">0 / 100 XP</span></div>
+          <div class="xp-bar-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="xpBarTrack"><div class="xp-bar-fill" id="xpBarFill" style="width:0%"></div></div>
+        </section>
+
+        <section class="accessibility-bar" id="accessBar">
+          <button class="access-btn" id="fontDecrease" title="Decrease font size">A-</button>
+          <button class="access-btn" id="fontIncrease" title="Increase font size">A+</button>
+          <button class="access-btn" id="highContrastToggle" title="Toggle high contrast">&#9728;</button>
+        </section>
+
+        <section class="hero-band">
+          <div>
+            <p class="eyebrow">Karibu, explorer!</p>
+            <h1>Learn English on a Tanzanian adventure.</h1>
+            <p>Chagua lesson, jibu maswali, earn XP, and unlock the next safari stop.</p>
+          </div>
+          <div class="mascot-wrap" aria-label="Kito the comet mascot">
+            <div class="mascot" id="mascotFace" aria-hidden="true">
+              <span class="mascot-eye left"></span>
+              <span class="mascot-eye right"></span>
+              <span class="mascot-smile"></span>
+            </div>
+            <div class="speech-bubble" id="mascotMessage" role="status" aria-live="assertive">Twende! Pick a lesson.</div>
+          </div>
+        </section>
+
+        <section id="mapView" class="view is-visible" aria-label="Adventure map">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Adventure Map</p>
+              <h2>Njia ya Kujifunza</h2>
+            </div>
+            <button class="small-action" id="resetProgress">Reset</button>
+          </div>
+          <div class="lesson-path" id="lessonPath" role="list" aria-label="Lessons"></div>
+        </section>
+
+        <section id="practiceView" class="view" aria-label="Practice zone">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Practice Zone</p>
+              <h2>Rudia Ulichojifunza</h2>
+            </div>
+          </div>
+          <div class="practice-grid">
+            <button class="practice-card" data-practice="mistakes"><strong>Mistake Review</strong><span>Rudia majibu yaliyokosewa.</span></button>
+            <button class="practice-card" data-practice="listen"><strong>Listening</strong><span>Sikiliza na chagua jibu.</span></button>
+            <button class="practice-card" data-practice="speak"><strong>Speaking</strong><span>Practice saying words aloud.</span></button>
+            <button class="practice-card" data-practice="mixed"><strong>Quick Revision</strong><span>Maswali mafupi ya haraka.</span></button>
+          </div>
+          <div class="daily-card">
+            <h3>Daily Quests</h3>
+            <ul id="questList"></ul>
+          </div>
+        </section>
+
+        <section id="vocabView" class="view" aria-label="Vocabulary notebook">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Daftari la Maneno</p>
+              <h2>Vocabulary Notebook</h2>
+            </div>
+          </div>
+          <div class="word-list" id="wordList"></div>
+        </section>
+
+        <section id="parentView" class="view" aria-label="Progress report">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Parent / Teacher</p>
+              <h2>Progress Report</h2>
+            </div>
+            <button class="small-action" id="exportReport">Export CSV</button>
+          </div>
+          <div class="report-filters">
+            <label>Date Range<select id="reportDateRange"><option value="7">7 days</option><option value="30" selected>30 days</option><option value="90">3 months</option><option value="365">Year</option><option value="all">All</option></select></label>
+          </div>
+          <div class="report-grid">
+            <div class="report-card"><span>Lessons Done</span><strong id="reportLessons">0</strong></div>
+            <div class="report-card"><span>Words Learned</span><strong id="reportWords">0</strong></div>
+            <div class="report-card"><span>Correct</span><strong id="reportCorrect">0</strong></div>
+            <div class="report-card"><span>Needs Practice</span><strong id="reportWeak">0</strong></div>
+          </div>
+          <div class="analytics-section">
+            <div class="daily-card"><h3>Progress Over Time</h3><div class="chart-container"><canvas id="progressChart" width="600" height="300" role="img" aria-label="Progress chart"></canvas></div></div>
+            <div class="daily-card"><h3>Performance by Category</h3><div class="chart-container"><canvas id="categoryChart" width="600" height="300" role="img" aria-label="Category chart"></canvas></div></div>
+          </div>
+          <div class="analytics-section">
+            <div class="daily-card"><h3>Accuracy</h3><div class="chart-container chart-small"><canvas id="accuracyChart" width="200" height="200" role="img" aria-label="Accuracy chart"></canvas><div class="chart-legend" id="accuracyLegend"></div></div></div>
+            <div class="daily-card"><h3>Study Time</h3><div class="chart-container"><canvas id="studyTimeChart" width="600" height="250" role="img" aria-label="Study time chart"></canvas></div></div>
+          </div>
+          <div class="daily-card"><h3>Word Mastery</h3><div class="mastery-bars" id="masteryBars"></div></div>
+          <div class="daily-card"><h3>Streak History</h3><div class="streak-calendar" id="streakCalendar" role="grid" aria-label="Streak calendar"></div></div>
+          <div class="daily-card"><h3>Teacher Assignment</h3><p>Recommended next: <b id="recommendedLesson">Greetings</b>.</p></div>
+          <div class="daily-card"><h3>Classroom Learners</h3><div class="student-list" id="studentList"></div></div>
+        </section>
+      </main>
+
+      <aside class="right-panel" role="complementary" aria-label="Extras">
+        <section class="daily-card">
+          <h3>Leaderboard</h3>
+          <ol class="league-list" id="leagueList"></ol>
+        </section>
+        <section class="daily-card">
+          <h3>Badges</h3>
+          <div class="badge-row" id="badgeRow"></div>
+        </section>
+        <section class="daily-card shop-card">
+          <h3>Shop</h3>
+          <div id="shopItems"></div>
+        </section>
+        <section class="daily-card version-card">
+          <div class="version-info">
+            <span class="version-badge">v<span id="appVersion">2.1.0</span></span>
+            <button class="small-action" id="changelogBtn">What's New</button>
+          </div>
+          <button class="feedback-btn" id="feedbackOpenBtn">Send Feedback</button>
+          <button class="feedback-btn" id="settingsBtn" style="margin-top:0.3rem;">Settings</button>
+        </section>
+      </aside>
+    </div>
+
+    <dialog id="lessonDialog" class="lesson-dialog" role="dialog" aria-labelledby="lessonTitle">
+      <div class="lesson-modal">
+        <header class="lesson-header">
+          <div>
+            <p class="eyebrow" id="lessonUnit">Unit</p>
+            <h2 id="lessonTitle">Lesson</h2>
+          </div>
+          <div class="lesson-timer" id="lessonTimer" aria-label="Time remaining">30s</div>
+          <button class="icon-button" id="closeLesson" aria-label="Close lesson (Esc)">X</button>
+        </header>
+        <div class="progress-track" aria-label="Lesson progress"><span id="lessonProgress"></span></div>
+        <div class="hearts-remaining" id="lessonHearts"></div>
+        <div class="exercise-area" id="exerciseArea"></div>
+        <footer class="answer-footer">
+          <div class="feedback" id="feedbackBox" role="status">Choose an answer.</div>
+          <button class="primary-button" id="checkButton">Check</button>
+          <button class="primary-button skip-btn" id="skipButton" style="display:none;">Skip</button>
+        </footer>
+      </div>
+    </dialog>
+
+    <dialog id="celebrationDialog" class="celebration-dialog" role="dialog" aria-labelledby="celebTitle">
+      <div class="celebration-modal">
+        <div id="celebrationContent"></div>
+        <button class="primary-button" id="celebrationContinue">Continue</button>
+      </div>
+    </dialog>
+
+    <dialog id="guideDialog" class="lesson-dialog" role="dialog" aria-labelledby="guideTitle">
+      <div class="lesson-modal guide-modal">
+        <header class="lesson-header">
+          <div>
+            <p class="eyebrow">Guidebook</p>
+            <h2 id="guideTitle">Lesson Notes</h2>
+          </div>
+          <button class="icon-button" id="closeGuide" aria-label="Close guide">X</button>
+        </header>
+        <div id="guideContent" class="guide-content"></div>
+      </div>
+    </dialog>
+
+    <dialog id="feedbackDialog" class="lesson-dialog" role="dialog" aria-labelledby="fbTitle">
+      <div class="lesson-modal">
+        <header class="lesson-header">
+          <div>
+            <p class="eyebrow">Feedback / Maoni</p>
+            <h2 id="fbTitle">Report Issue</h2>
+          </div>
+          <button class="icon-button" id="feedbackCloseBtn" aria-label="Close">X</button>
+        </header>
+        <div class="email-settings-bar">
+          <span>Inatumwa kwa:</span>
+          <strong id="feedbackRecipientDisplay">(hajawekwa)</strong>
+          <button class="small-action" id="feedbackSetEmailBtn">Badilisha</button>
+        </div>
+        <form id="feedbackForm">
+          <label style="display:flex;flex-direction:column;gap:0.3rem;margin-bottom:0.75rem;font-size:0.8rem;font-weight:600;color:var(--text-mid);">
+            Category<select id="feedbackCategory"><option value="bug">Bug / Hitilafu</option><option value="suggestion">Suggestion / Pendekezo</option><option value="feature">Feature Request</option><option value="other">Other</option></select>
+          </label>
+          <label style="display:flex;flex-direction:column;gap:0.3rem;margin-bottom:0.75rem;font-size:0.8rem;font-weight:600;color:var(--text-mid);">
+            Message<textarea id="feedbackMessage" rows="4" required placeholder="Describe the issue..." style="padding:0.6rem;border:2px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font);font-size:0.9rem;resize:vertical;"></textarea>
+          </label>
+          <label style="display:flex;flex-direction:column;gap:0.3rem;margin-bottom:0.75rem;font-size:0.8rem;font-weight:600;color:var(--text-mid);">
+            Your Email<small style="font-weight:400;color:var(--text-light);">(optional - kama ungependa kujibiwa)</small>
+            <input id="feedbackEmail" type="email" placeholder="name@example.com" style="padding:0.6rem;border:2px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font);font-size:0.9rem;" />
+          </label>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+            <button class="primary-button" type="submit" id="feedbackSubmitBtn">SEND</button>
+            <button type="button" class="small-action" id="feedbackCopyBtn">Copy to Clipboard</button>
+            <button type="button" class="small-action" id="feedbackViewBtn">View All</button>
+          </div>
+        </form>
+        <p style="font-size:0.7rem;color:var(--text-light);margin-top:0.5rem;text-align:center;">Bonyeza SEND kufungua email, au Copy nakili kwenye clipboard.</p>
+        <div id="feedbackList" style="display:none;margin-top:1rem;"></div>
+      </div>
+    </dialog>
+
+    <dialog id="settingsDialog" class="lesson-dialog" role="dialog" aria-labelledby="settingsTitle">
+      <div class="lesson-modal">
+        <header class="lesson-header">
+          <div>
+            <p class="eyebrow">Mipangilio</p>
+            <h2 id="settingsTitle">Settings</h2>
+          </div>
+          <button class="icon-button" id="settingsCloseBtn" aria-label="Close">X</button>
+        </header>
+        <div class="settings-list">
+          <div class="setting-row">
+            <div><b>PIN Lock</b><span>Weka PIN kuzuia watoto kubadilisha mipangilio</span></div>
+            <button class="small-action" id="pinToggle">Set PIN</button>
+          </div>
+          <div class="setting-row">
+            <div><b>Timer</b><span>Weka muda kwa kila swali (sekunde)</span></div>
+            <select id="timerSetting" style="padding:0.3rem;border:2px solid var(--border);border-radius:6px;font-family:var(--font);">
+              <option value="0">No timer</option>
+              <option value="15">15s</option>
+              <option value="30" selected>30s</option>
+              <option value="60">60s</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <div><b>Shuffle Exercises</b><span>Changanya mpangilio wa maswali</span></div>
+            <label class="toggle-wrap"><input type="checkbox" id="shuffleToggle" checked /><span class="toggle-slider"></span></label>
+          </div>
+          <div class="setting-row">
+            <div><b>Dark Mode</b><span>Badilisha mandhari ya giza au nyepesi</span></div>
+            <label class="toggle-wrap"><input type="checkbox" id="darkModeToggleSetting" /><span class="toggle-slider"></span></label>
+          </div>
+          <div class="setting-row">
+            <div><b>High Contrast</b><span>Rangi kali zaidi kwa urahisi wa kuona</span></div>
+            <label class="toggle-wrap"><input type="checkbox" id="highContrastSetting" /><span class="toggle-slider"></span></label>
+          </div>
+          <div class="setting-row">
+            <div><b>Notifications</b><span>Kumbusha za kusoma kila siku</span></div>
+            <label class="toggle-wrap"><input type="checkbox" id="notifToggle" /><span class="toggle-slider"></span></label>
+          </div>
+          <div class="setting-row">
+            <div><b>Font Size</b><span>Ukubwa wa maandishi</span></div>
+            <div style="display:flex;gap:0.3rem;">
+              <button class="small-action" id="fontDecBtn">A-</button>
+              <button class="small-action" id="fontResetBtn">Reset</button>
+              <button class="small-action" id="fontIncBtn">A+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog id="changelogDialog" class="lesson-dialog" role="dialog" aria-labelledby="changelogTitle">
+      <div class="lesson-modal guide-modal">
+        <header class="lesson-header">
+          <div>
+            <p class="eyebrow">Update History</p>
+            <h2 id="changelogTitle">Changelog</h2>
+          </div>
+          <button class="icon-button" id="changelogCloseBtn" aria-label="Close">X</button>
+        </header>
+        <div id="changelogContent" class="guide-content"></div>
+      </div>
+    </dialog>
+
+    <dialog id="uploadDialog" class="lesson-dialog" role="dialog" aria-labelledby="uploadTitle">
+      <div class="lesson-modal">
+        <header class="lesson-header">
+          <div>
+            <p class="eyebrow">Upload / Update</p>
+            <h2 id="uploadTitle">Update App</h2>
+          </div>
+          <button class="icon-button" id="uploadCloseBtn" aria-label="Close">X</button>
+        </header>
+        <div>
+          <p style="font-size:0.85rem;color:var(--text-mid);margin-bottom:1rem;">Upload new version files or backup data.</p>
+          <label style="display:flex;flex-direction:column;gap:0.5rem;margin-bottom:1rem;font-size:0.8rem;font-weight:600;color:var(--text-mid);">
+            Choose file (.html/.js/.css/.json)
+            <input type="file" id="uploadFileInput" accept=".html,.js,.css,.json" style="font-family:var(--font);" />
+          </label>
+          <div id="uploadPreview" style="background:var(--bg-cream);border-radius:var(--radius-sm);padding:0.75rem;margin-bottom:1rem;font-size:0.8rem;display:none;"></div>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+            <button class="primary-button" id="uploadApplyBtn">Apply</button>
+            <button class="small-action" id="uploadExportDataBtn">Export Data</button>
+            <button class="small-action" id="uploadImportDataBtn">Import Data</button>
+          </div>
+          <input type="file" id="importDataInput" accept=".json" style="display:none;" />
+        </div>
+      </div>
+    </dialog>
+
+    <dialog id="pinDialog" class="lesson-dialog" role="dialog" aria-labelledby="pinTitle">
+      <div class="lesson-modal" style="max-width:320px;margin:auto;">
+        <header class="lesson-header">
+          <div>
+            <p class="eyebrow">Security</p>
+            <h2 id="pinTitle">PIN Lock</h2>
+          </div>
+          <button class="icon-button" id="pinCloseBtn" aria-label="Close">X</button>
+        </header>
+        <p style="font-size:0.85rem;color:var(--text-mid);margin-bottom:1rem;">Enter PIN to access Settings / Report:</p>
+        <input type="password" id="pinInput" maxlength="4" inputmode="numeric" pattern="[0-9]*" autocomplete="off"
+          style="width:100%;padding:0.75rem;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:1.5rem;text-align:center;letter-spacing:0.5rem;font-family:var(--font);" />
+        <div style="display:flex;gap:0.5rem;margin-top:1rem;">
+          <button class="primary-button" id="pinSubmitBtn" style="flex:1;">Unlock</button>
+        </div>
+        <p style="font-size:0.7rem;color:var(--text-light);margin-top:0.5rem;text-align:center;">Default PIN: 1234</p>
+      </div>
+    </dialog>
+
+    <div id="toastContainer" role="alert" aria-live="assertive"></div>
+
+    <script src="lessons.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
