@@ -593,7 +593,11 @@ function openLesson(id) {
   renderEx();
 }
 function closeLesson() {
-  stopTimer(); D.lessonDialog.close(); curLesson = null;
+  stopTimer();
+  D.lessonDialog.close();
+  D.lessonDialog.removeAttribute("open");
+  document.body.style.overflow = "";
+  curLesson = null;
   renderMap(); refreshHearts(); checkBadges(); renderWeak();
 }
 
@@ -1098,6 +1102,7 @@ function init() {
 
   // Lesson
   D.closeLesson.addEventListener("click", closeLesson);
+  D.lessonDialog.addEventListener("click", (e) => { if (e.target === D.lessonDialog) closeLesson(); });
 
   // Celebration
   D.celebContinue.addEventListener("click", () => { D.celebDialog.close(); });
