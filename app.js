@@ -938,6 +938,10 @@ function init() {
     localStorage.setItem(K.V, VER);
   }
   if (D.appVersion) D.appVersion.textContent = VER;
+  // Force reload if browser has old cached version
+  const prevVer = sessionStorage.getItem("ss_ver");
+  if (prevVer && prevVer !== VER) { sessionStorage.removeItem("ss_ver"); location.reload(); return; }
+  sessionStorage.setItem("ss_ver", VER);
 
   // Auth
   D.loginForm.addEventListener("submit", e => { e.preventDefault(); const n = D.loginName.value.trim(); const r = D.loginRole.value; if (n.length < 2) return; login(n, r); });
