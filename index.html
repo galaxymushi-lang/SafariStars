@@ -8,18 +8,16 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icons/icon-192.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="icons/icon-192.svg" />
-  <link rel="stylesheet" href="styles.css?v=5.0.0" />
+  <link rel="stylesheet" href="styles.css?v=6.0.0" />
 </head>
 <body>
 
-<!-- NOTIFICATION TOAST -->
 <div class="notif-toast" id="notifToast" style="display:none">
   <span class="nt-icon" id="notifIcon">🔔</span>
   <span class="nt-text" id="notifText"></span>
   <button class="nt-close" id="notifClose">&times;</button>
 </div>
 
-<!-- AUTH -->
 <section class="auth" id="authScreen">
   <div class="auth-card">
     <div class="auth-avatar"><div class="avatar-circle orange">SS</div></div>
@@ -35,7 +33,6 @@
   </div>
 </section>
 
-<!-- APP -->
 <div class="app" id="appShell">
   <header class="hdr">
     <div class="hdr-left"><div class="avatar-circle sm orange">SS</div><span class="hdr-title">Safari Stars</span></div>
@@ -47,14 +44,12 @@
     <button class="hdr-btn" id="settingsBtn"><i class="i-gear"></i></button>
   </header>
 
-  <main class="main" id="mainArea">
-    <!-- Content rendered by JS -->
-  </main>
+  <main class="main" id="mainArea"></main>
 </div>
 
 <div class="toasts" id="toastWrap"></div>
 
-<script src="lessons.js?v=5.0.0"></script>
-<script src="app.js?v=5.0.0"></script>
+<script src="lessons.js?v=6.0.0"></script>
+<script src="app.js?v=6.0.0"></script>
 </body>
 </html>

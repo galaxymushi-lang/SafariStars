@@ -13,7 +13,7 @@ const K = {
   W: P + "weak",
   PL: P + "placed"
 };
-const VER = "5.0.0";
+const VER = "6.0.0";
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => document.querySelectorAll(sel);
 const M = document.getElementById("mainArea");
@@ -443,6 +443,70 @@ function toast(message, type = "info") {
 }
 
 // ══════════════════════════════════════
+// TEXT-TO-SPEECH
+// ══════════════════════════════════════
+function speakWord(word) {
+  if (!word) return;
+  try {
+    speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(word);
+    utterance.lang = "en";
+    utterance.rate = 0.8;
+    utterance.pitch = 1;
+    speechSynthesis.speak(utterance);
+  } catch (_) { /* ignore */ }
+}
+
+function getDailyWord() {
+  const today = dateKey();
+  const seed = today.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
+  const allWords = [];
+  LESSONS.forEach((lesson) => {
+    lesson.exercises.forEach((ex) => {
+      if (ex.options) ex.options.forEach((o) => allWords.push(o));
+      if (ex.answer) allWords.push(ex.answer);
+      if (ex.audio) allWords.push(ex.audio);
+      if (ex.phrase) ex.phrase.split(" ").forEach((w) => allWords.push(w));
+    });
+  });
+  const unique = [...new Set(allWords.filter((w) => w && w.length >= 3))];
+  if (unique.length === 0) return { en: "Hello", sw: "Habari" };
+  const word = unique[seed % unique.length];
+  const swahiliMap = {
+    hello: "habari", goodbye: "kwaheri", thank: "asante", please: "tafadhali",
+    water: "maji", food: "chakula", friend: "rafiki", family: "familia",
+    cat: "paka", dog: "mbwa", tree: "mti", sun: "jua", moon: "mwezi",
+    book: "kitabu", pen: "kalamu", school: "shule", teacher: "mwalimu",
+    big: "kubwa", small: "ndogo", good: "nzuri", bad: "mbaya",
+    one: "moja", two: "mbili", three: "tatu", four: "nne", five: "tano",
+    six: "sita", seven: "saba", eight: "nane", nine: "tisa", ten: "kumi",
+    red: "nyekundu", blue: "bluu", green: "kijani", yellow: "njano",
+    happy: "furaha", sad: "huzuni", eat: "kula", drink: "kunywa",
+    go: "kwenda", come: "kuja", see: "kuona", hear: "kusikia",
+    mother: "mama", father: "baba", sister: "dada", brother: "kaka",
+    grandmother: "bibi", grandfather: "babu", morning: "asubuhi",
+    afternoon: "mchana", evening: "jioni", night: "usiku",
+    apple: "tufaha", banana: "ndizi", mango: "embe", orange: "chungwa",
+    head: "kichwa", eye: "jicho", ear: "sikio", mouth: "mdomo",
+    hand: "mkono", leg: "mguu", heart: "moyo", blood: "damu",
+    beautiful: "nzuri", strong: "imara", fast: "haraka", slow: "taratibu",
+    open: "fungua", close: "funga", give: "pa", take: "chukua",
+    today: "leo", tomorrow: "kesho", yesterday: "jana", always: "daima",
+    yes: "ndio", no: "hapana", sorry: "pole",
+    house: "nyumba", door: "mlango", window: "dirisha", chair: "kiti",
+    table: "meza", bed: "kitanda", floor: "sakafu", wall: "ukuta",
+    boy: "mvulana", girl: "msichana", man: "mtu", woman: "mwanamke",
+    baby: "mtoto", old: "mzee", new: "mpya", first: "kwanza",
+    learn: "jifunze", read: "soma", write: "andika", speak: "ongea",
+    listen: "sikiliza", understand: "elewa", remember: "kumbuka",
+    star: "nyota", moon: "mwezi", rain: "mvua", fire: "moto",
+    night: "usiku", today: "leo", tomorrow: "kesho", strong: "imara"
+  };
+  const lower = word.toLowerCase();
+  return { en: word.charAt(0).toUpperCase() + word.slice(1), sw: swahiliMap[lower] || "—" };
+}
+
+// ══════════════════════════════════════
 // NAVIGATION
 // ══════════════════════════════════════
 function showPage(page) {
@@ -453,6 +517,8 @@ function showPage(page) {
     case "leaderboard": renderLeaderboard(); break;
     case "settings": renderSettings(); break;
     case "daily": renderDailyPage(); break;
+    case "vocab": renderVocabPage(); break;
+    case "speak": renderSpeakPage(); break;
   }
 }
 
@@ -529,6 +595,8 @@ function renderHome() {
     + practiceHTML
     + '<div class="map">' + mapHTML + '</div>'
     + '<div class="home-nav">'
+    +   '<button class="home-nav-btn" data-page="vocab"><i class="i-book"></i><span>Words</span></button>'
+    +   '<button class="home-nav-btn" data-page="speak"><i class="i-target"></i><span>Speak</span></button>'
     +   '<button class="home-nav-btn" data-page="profile"><i class="i-user"></i><span>Profile</span></button>'
     +   '<button class="home-nav-btn" data-page="shop"><i class="i-shop"></i><span>Shop</span></button>'
     +   '<button class="home-nav-btn" data-page="leaderboard"><i class="i-trophy"></i><span>League</span></button>'
@@ -1457,6 +1525,158 @@ function renderDailyPage() {
 }
 
 // ══════════════════════════════════════
+// VOCAB PAGE (WORD HISTORY)
+// ══════════════════════════════════════
+function renderVocabPage() {
+  const vocab = S.vocab || [];
+  const today = getDailyWord();
+
+  if (vocab.length === 0) {
+    M.innerHTML = ''
+      + '<div class="daily-word-banner">'
+      +   '<h3>Word of the Day</h3>'
+      +   '<div class="dw-en">' + today.en + '</div>'
+      +   '<div class="dw-sw">' + today.sw + '</div>'
+      +   '<button class="dw-speak" id="dwSpeak">🔊</button>'
+      + '</div>'
+      + '<h2>My Vocabulary</h2>'
+      + '<p class="muted">Start learning to build your word list!</p>'
+      + '<button class="btn btn-outline btn-block" id="backHome">← Back</button>';
+
+    document.getElementById("dwSpeak").addEventListener("click", () => speakWord(today.en));
+    document.getElementById("backHome").addEventListener("click", () => showPage("home"));
+    return;
+  }
+
+  M.innerHTML = ''
+    + '<div class="daily-word-banner">'
+    +   '<h3>Word of the Day</h3>'
+    +   '<div class="dw-en">' + today.en + '</div>'
+    +   '<div class="dw-sw">' + today.sw + '</div>'
+    +   '<button class="dw-speak" id="dwSpeak">🔊</button>'
+    + '</div>'
+    + '<h2>My Vocabulary (' + vocab.length + ' words)</h2>'
+    + '<div id="vocabList"></div>'
+    + '<button class="btn btn-outline btn-block" id="backHome">← Back</button>';
+
+  document.getElementById("dwSpeak").addEventListener("click", () => speakWord(today.en));
+  document.getElementById("backHome").addEventListener("click", () => showPage("home"));
+
+  const list = document.getElementById("vocabList");
+  list.innerHTML = vocab.slice().reverse().map((v) => {
+    const mastery = v.mastery || 1;
+    const dots = [1, 2, 3].map((i) =>
+      '<span class="vi-dot' + (i <= mastery ? " filled" : "") + '"></span>'
+    ).join("");
+    return '<div class="vocab-item">'
+      + '<span class="vi-icon">' + (v.icon || "📝") + '</span>'
+      + '<div class="vi-info"><div class="vi-en">' + v.word + '</div>'
+      + '<div class="vi-sw">' + (v.sw || "") + '</div></div>'
+      + '<button class="vi-speak" data-word="' + v.word + '">🔊</button>'
+      + '<div class="vi-mastery">' + dots + '</div>'
+      + '</div>';
+  }).join("");
+
+  list.querySelectorAll(".vi-speak").forEach((btn) => {
+    btn.addEventListener("click", () => speakWord(btn.dataset.word));
+  });
+}
+
+// ══════════════════════════════════════
+// SPEAK PAGE
+// ══════════════════════════════════════
+let speakTarget = "";
+let speakRecognition = null;
+
+function renderSpeakPage() {
+  const vocab = S.vocab || [];
+  if (vocab.length === 0) {
+    M.innerHTML = ''
+      + '<h2>Speaking Practice</h2>'
+      + '<p class="muted">Learn some words first to practice speaking!</p>'
+      + '<button class="btn btn-outline btn-block" id="backHome">← Back</button>';
+    document.getElementById("backHome").addEventListener("click", () => showPage("home"));
+    return;
+  }
+
+  const word = vocab[Math.floor(Math.random() * vocab.length)];
+  speakTarget = word.word;
+
+  M.innerHTML = ''
+    + '<h2>Speaking Practice</h2>'
+    + '<div class="speak-area">'
+    +   '<p class="muted">Say this word:</p>'
+    +   '<div class="speak-target" id="speakWord">' + speakTarget + '</div>'
+    +   '<button class="dw-speak" id="speakListen" style="background:var(--b)">🔊 Listen</button>'
+    +   '<button class="speak-btn" id="speakMic">🎤</button>'
+    +   '<div class="speak-result" id="speakResult"></div>'
+    +   '<button class="btn btn-green btn-block" id="speakNext">Next Word</button>'
+    + '</div>'
+    + '<button class="btn btn-outline btn-block" id="backHome">← Back</button>';
+
+  document.getElementById("speakListen").addEventListener("click", () => speakWord(speakTarget));
+  document.getElementById("speakNext").addEventListener("click", () => renderSpeakPage());
+  document.getElementById("backHome").addEventListener("click", () => {
+    if (speakRecognition) { try { speakRecognition.stop(); } catch (_) {} }
+    showPage("home");
+  });
+
+  const micBtn = document.getElementById("speakMic");
+  const resultEl = document.getElementById("speakResult");
+
+  if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) {
+    resultEl.textContent = "Speech recognition not supported in this browser";
+    resultEl.style.color = "var(--r)";
+    micBtn.style.opacity = "0.4";
+    micBtn.style.pointerEvents = "none";
+    return;
+  }
+
+  micBtn.addEventListener("click", () => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    speakRecognition = new SpeechRecognition();
+    speakRecognition.lang = "en";
+    speakRecognition.continuous = false;
+    speakRecognition.interimResults = false;
+
+    micBtn.classList.add("recording");
+    resultEl.textContent = "Listening...";
+    resultEl.style.color = "var(--t2)";
+
+    speakRecognition.onresult = (event) => {
+      const spoken = event.results[0][0].transcript.toLowerCase().trim();
+      const target = speakTarget.toLowerCase().trim();
+
+      if (spoken === target || target.includes(spoken) || spoken.includes(target)) {
+        resultEl.textContent = "✅ Correct! You said: " + event.results[0][0].transcript;
+        resultEl.style.color = "var(--g)";
+        sndCorrect();
+        addXP(5);
+        S.stats.correct++;
+        saveState();
+      } else {
+        resultEl.textContent = "❌ You said: " + event.results[0][0].transcript + " (Expected: " + speakTarget + ")";
+        resultEl.style.color = "var(--r)";
+        sndWrong();
+      }
+      micBtn.classList.remove("recording");
+    };
+
+    speakRecognition.onerror = () => {
+      resultEl.textContent = "❌ Could not recognize. Try again!";
+      resultEl.style.color = "var(--r)";
+      micBtn.classList.remove("recording");
+    };
+
+    speakRecognition.onend = () => {
+      micBtn.classList.remove("recording");
+    };
+
+    speakRecognition.start();
+  });
+}
+
+// ══════════════════════════════════════
 // ONLINE WORD FETCH
 // ══════════════════════════════════════
 async function fetchOnlineWords(count = 8) {
@@ -1539,10 +1759,11 @@ function scheduleDailyReminder() {
   const today = dateKey();
   if (last === today) return;
 
+  const dw = getDailyWord();
   setTimeout(() => {
     try {
-      new Notification("🦁 Safari Stars", {
-        body: "Hey " + (S.user?.name || "there") + "! Time to practice! 📚",
+      new Notification("🦁 Safari Stars — " + dw.en, {
+        body: "Word of the day: " + dw.en + " (" + dw.sw + ") — Time to practice! 📚",
         icon: "icons/icon-192.svg",
         tag: "safari-daily"
       });

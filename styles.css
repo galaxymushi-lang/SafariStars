@@ -239,8 +239,8 @@ dialog::backdrop{background:rgba(0,0,0,.4);backdrop-filter:blur(4px)}
 .ex-bottom{padding:12px 16px 16px}
 
 /* ── Home Nav ── */
-.home-nav{display:flex;gap:8px;margin-top:16px}
-.home-nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 8px;background:var(--c);border-radius:var(--R);box-shadow:var(--sh);font-size:.7rem;font-weight:600;color:var(--t2);transition:all .15s}
+.home-nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;justify-content:center}
+.home-nav-btn{width:calc(33% - 6px);display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 8px;background:var(--c);border-radius:var(--R);box-shadow:var(--sh);font-size:.7rem;font-weight:600;color:var(--t2);transition:all .15s}
 .home-nav-btn:hover{border-color:var(--b);color:var(--b)}
 
 /* ── Celebration Tags ── */
@@ -249,6 +249,48 @@ dialog::backdrop{background:rgba(0,0,0,.4);backdrop-filter:blur(4px)}
 .xp-tag{background:rgba(255,150,0,.1);color:var(--o)}
 .badge-tag{background:rgba(206,130,255,.1);color:var(--p)}
 .star-tag{background:rgba(255,200,0,.1);color:var(--gd)}
+
+/* ── Word Card ── */
+.word-card{background:var(--c);border-radius:var(--R);padding:20px;margin-bottom:10px;box-shadow:var(--sh);text-align:center;transition:background .3s}
+.word-card .wc-en{font-size:1.4rem;font-weight:800;margin-bottom:4px}
+.word-card .wc-sw{font-size:.95rem;color:var(--t2);margin-bottom:8px}
+.word-card .wc-icon{font-size:2rem;margin-bottom:8px}
+.word-card .wc-speak{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background:var(--b);color:#fff;font-size:1.1rem;margin-bottom:8px;cursor:pointer;transition:transform .15s}
+.word-card .wc-speak:hover{transform:scale(1.1)}
+.word-card .wc-mastery{font-size:.7rem;color:var(--t2)}
+
+/* ── Vocab List ── */
+.vocab-item{display:flex;align-items:center;gap:10px;padding:12px;background:var(--c);border-radius:var(--Rs);margin-bottom:6px;box-shadow:var(--sh);transition:background .3s}
+.vocab-item .vi-icon{font-size:1.4rem}
+.vocab-item .vi-info{flex:1}
+.vocab-item .vi-en{font-weight:700;font-size:.9rem}
+.vocab-item .vi-sw{font-size:.75rem;color:var(--t2)}
+.vocab-item .vi-speak{width:32px;height:32px;border-radius:50%;background:var(--b);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.8rem;cursor:pointer}
+.vocab-item .vi-mastery{display:flex;gap:2px}
+.vocab-item .vi-dot{width:6px;height:6px;border-radius:50%;background:var(--bd)}
+.vocab-item .vi-dot.filled{background:var(--g)}
+
+/* ── Daily Word ── */
+.daily-word-banner{background:linear-gradient(135deg,var(--g),var(--b));color:#fff;border-radius:var(--R);padding:16px;margin-bottom:16px;text-align:center}
+.daily-word-banner h3{font-size:.85rem;margin-bottom:8px;opacity:.9}
+.daily-word-banner .dw-en{font-size:1.6rem;font-weight:800}
+.daily-word-banner .dw-sw{font-size:.95rem;opacity:.85;margin-bottom:8px}
+.daily-word-banner .dw-speak{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.25);color:#fff;font-size:1.2rem;cursor:pointer}
+
+/* ── Speaking Exercise ── */
+.speak-area{display:flex;flex-direction:column;align-items:center;gap:16px;padding:20px}
+.speak-target{font-size:1.8rem;font-weight:800;text-align:center}
+.speak-btn{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--r),var(--pk));color:#fff;font-size:2rem;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(255,75,75,.3);cursor:pointer;transition:all .2s}
+.speak-btn:hover{transform:scale(1.05)}
+.speak-btn:active{transform:scale(.95)}
+.speak-btn.recording{animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,75,75,.4)}50%{box-shadow:0 0 0 15px rgba(255,75,75,0)}}
+.speak-result{font-size:.9rem;font-weight:600;text-align:center;min-height:24px}
+
+/* ── Tabs ── */
+.tab-bar{display:flex;gap:4px;margin-bottom:16px;background:var(--bg);border-radius:var(--R);padding:4px}
+.tab-btn{flex:1;padding:10px 8px;border-radius:var(--Rs);font-size:.75rem;font-weight:600;text-align:center;color:var(--t2);transition:all .15s;cursor:pointer}
+.tab-btn.active{background:var(--c);color:var(--g);box-shadow:var(--sh)}
 
 @media(max-width:380px){.opt-grid{grid-template-columns:1fr}.grid3{grid-template-columns:repeat(2,1fr)}}
 
