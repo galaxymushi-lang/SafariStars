@@ -2,7 +2,7 @@
 "use strict";
 const P = "ss4_";
 const K = { U: P+"users", C: P+"cur", V: P+"ver", S: P+"set", W: P+"weak", PL: P+"placed" };
-const VER = "4.0.0";
+const VER = "4.1.0";
 const $ = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
 
@@ -11,7 +11,7 @@ function grab() {
   ["authScreen","appShell","loginForm","loginName","loginRole","savedUsers",
    "lessonMap","lessonDialog","closeLesson","exerciseArea","feedbackBox",
    "checkButton","skipButton","lessonProgress","lessonHearts","lessonTimer",
-   "celebDialog","celebEmoji","celebTitle","celebDesc","celebEarned","celebContinue","celebConfetti",
+   "celebDialog","celebIcon","celebTitle","celebDesc","celebEarned","celebContinue","celebConfetti",
    "streakDisplay","heartsDisplay","xpDisplay","levelDisplay","xpBarFill","xpProgressText",
    "greetLine","greetSub","profileName","profileRole",
    "statStreak","statStars","statXP","statLessons","statCorrect","statWords",
@@ -22,8 +22,8 @@ function grab() {
    "practiceBanner","practiceDesc","practiceBtn",
    "placementDialog","placementProgress","placementBarFill","placementBody",
    "placementCheck","placementFeedback","placementClose",
-   "resultDialog","resultEmoji","resultTitle","resultDesc","resultLevel","resultWeak","resultContinue",
-   "toastWrap","mascotMini"
+   "resultDialog","resultIcon","resultTitle","resultDesc","resultLevel","resultWeak","resultContinue",
+   "toastWrap"
   ].forEach(id => D[id] = document.getElementById(id));
 }
 
@@ -238,9 +238,9 @@ function renderDaily() {
   const t = dateKey(); const g = (S.daily || {})[t] || {};
   D.dailyBody.innerHTML = DAILY.map(d => {
     const cur = g[d.id] || 0; const ok = cur >= d.need;
-    return `<div class="daily-goal ${ok ? 'done' : ''}" style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg);border-radius:var(--r);margin-bottom:8px">
+    return `<div class="daily-goal ${ok ? 'done' : ''}" style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg);border-radius:var(--R);margin-bottom:8px">
       <span style="font-size:1.5rem">${d.icon}</span>
-      <div style="flex:1"><strong style="font-size:.85rem">${d.label}</strong><br><small style="font-size:.7rem;color:var(--text2)">${cur} / ${d.need}</small></div>
+      <div style="flex:1"><strong style="font-size:.85rem">${d.label}</strong><br><small style="font-size:.7rem;color:var(--t2)">${cur} / ${d.need}</small></div>
       <span style="font-size:1.2rem">${ok ? '✅' : ''}</span>
     </div>`;
   }).join("");
@@ -262,7 +262,7 @@ function renderWeak() {
   }
   D.weaknessList.innerHTML = entries.map(([unit, count]) => {
     const short = unit.replace(/Unit \d+ - /, "");
-    return `<div class="weakness-item"><span class="w-icon">⚠️</span><div class="w-info"><strong>${short}</strong><small>${count} wrong answers</small></div></div>`;
+    return `<div class="weak-item"><div class="weak-dot"></div><div class="weak-info"><strong>${short}</strong><small>${count} wrong answers</small></div></div>`;
   }).join("");
   // Practice banner
   if (D.practiceBanner) {
@@ -285,20 +285,17 @@ function toast(msg, type = "info") {
 // ── Celebration ──
 function showCeleb(type, data) {
   if (type === "level") {
-    D.celebEmoji.textContent = "🎉";
     D.celebTitle.textContent = "Level " + data + "!";
     D.celebDesc.textContent = "You're getting better every day!";
     D.celebEarned.innerHTML = '<span class="xp-tag">✨ +50 XP bonus</span>';
     addXP(50); launchConfetti(D.celebConfetti);
   } else if (type === "badge") {
-    D.celebEmoji.textContent = data.icon;
     D.celebTitle.textContent = "Badge Earned!";
     D.celebDesc.textContent = data.name + " — " + data.desc;
     D.celebEarned.innerHTML = '<span class="badge-tag">' + data.icon + ' ' + data.name + '</span>';
     launchConfetti(D.celebConfetti);
   } else if (type === "lesson") {
     const p = data || {};
-    D.celebEmoji.textContent = p.perfect ? "💎" : "🎊";
     D.celebTitle.textContent = p.perfect ? "Perfect Score!" : "Lesson Complete!";
     D.celebDesc.textContent = "You earned " + p.xp + " XP!";
     let tags = '<span class="xp-tag">✨ ' + p.xp + ' XP</span>';
@@ -307,7 +304,6 @@ function showCeleb(type, data) {
     D.celebEarned.innerHTML = tags;
     launchConfetti(D.celebConfetti);
   } else if (type === "placement") {
-    D.resultEmoji.textContent = data.emoji;
     D.resultTitle.textContent = data.title;
     D.resultDesc.textContent = data.desc;
     D.resultLevel.textContent = data.level;
@@ -376,11 +372,13 @@ function logout() {
 
 // ── Navigation ──
 function goPage(id) {
-  $$(".page").forEach(p => p.classList.remove("active"));
+  $$(".pg").forEach(p => p.classList.remove("active"));
   const pg = document.getElementById(id); if (pg) pg.classList.add("active");
-  $$(".nav-btn").forEach(b => b.classList.toggle("active", b.dataset.page === id));
+  $$(".bnav-btn").forEach(b => b.classList.toggle("active", b.dataset.page === id));
   if (id === "pageHome") renderMap();
   if (id === "pageProfile") renderProfile();
+  if (id === "pageShop") renderShop();
+  if (id === "pageLeaderboard") renderLeague();
 }
 
 // ── Mascot ──
@@ -527,26 +525,27 @@ function renderMap() {
   let html = "";
   units.forEach(unit => {
     const lessons = LESSONS.filter(l => l.unit === unit);
-    html += `<div class="unit-label" style="font-size:.7rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin:12px 0 6px;padding-left:4px">${unit}</div>`;
+    html += `<div class="unit-label">${unit}</div>`;
     lessons.forEach(l => {
       const p = S.progress[l.id]; const done = p?.completed; const score = p?.bestScore || 0;
       const li = LESSONS.findIndex(x => x.id === l.id);
       const prevDone = li === 0 || S.progress[LESSONS[li - 1].id]?.completed;
       const isUnlocked = S.progress[l.id]?.unlocked;
       const locked = !done && !prevDone && !isUnlocked;
-      html += `<div class="lesson-card ${done ? 'done' : ''} ${locked ? 'locked' : ''}" data-id="${l.id}">
-        <div class="lc-icon">${locked ? '🔒' : l.icon}</div>
+      const iconClass = unit.includes("Greetings") ? "g" : unit.includes("Basics") ? "b" : unit.includes("People") ? "p" : unit.includes("Nature") ? "o" : unit.includes("Time") ? "r" : "pk";
+      html += `<div class="lcard ${done ? 'done' : ''} ${locked ? 'locked' : ''}" data-id="${l.id}">
+        <div class="lc-ic"><div class="lc-dot ${iconClass}"></div></div>
         <div class="lc-info">
           <h3>${l.title}</h3>
           <p>${l.exercises.length} exercises</p>
-          ${done ? '<div class="lc-prog"><div style="width:' + score + '%"></div></div>' : ''}
+          ${done ? '<div class="lc-pg"><div style="width:' + score + '%"></div></div>' : ''}
         </div>
-        <span class="lc-status ${done ? 'done' : ''}">${done ? '✅ ' + score + '%' : locked ? '🔒' : '▶'}</span>
+        <span class="lc-st ${done ? 'done' : (score > 0 ? 'pct' : '')}">${done ? score + '%' : locked ? '🔒' : '▶'}</span>
       </div>`;
     });
   });
   D.lessonMap.innerHTML = html;
-  D.lessonMap.querySelectorAll(".lesson-card:not(.locked)").forEach(el => {
+  D.lessonMap.querySelectorAll(".lcard:not(.locked)").forEach(el => {
     el.addEventListener("click", () => { sndClick(); openLesson(el.dataset.id); });
   });
   setGreeting(Object.values(S.progress).filter(p => p.completed).length === 0 ? "greet" : "idle");
@@ -847,7 +846,7 @@ function renderProfile() {
 function renderShop() {
   if (D.shopStars) D.shopStars.textContent = S.stars;
   if (!D.shopGrid) return;
-  D.shopGrid.innerHTML = SHOP.map(i => '<div class="shop-item" data-id="' + i.id + '"><span class="shop-icon">' + i.icon + '</span><div class="shop-info"><h3>' + i.name + '</h3><p>' + i.desc + '</p></div><span class="shop-cost">⭐' + i.cost + '</span></div>').join("");
+  D.shopGrid.innerHTML = SHOP.map(i => '<div class="shop-item" data-id="' + i.id + '"><div class="shop-ic ' + (i.id === "streak_freeze" ? "blue" : i.id === "hearts_refill" ? "red" : "purple") + '"><i class="i-' + (i.id === "streak_freeze" ? "lock" : i.id === "hearts_refill" ? "heart" : "star") + '"></i></div><div class="shop-info"><b>' + i.name + '</b><small>' + i.desc + '</small></div><span class="shop-cost">⭐ ' + i.cost + '</span></div>').join("");
   D.shopGrid.querySelectorAll(".shop-item").forEach(el => el.addEventListener("click", () => {
     const item = SHOP.find(i => i.id === el.dataset.id); if (!item) return;
     if (S.stars < item.cost) { toast("Not enough stars!", "err"); return; }
@@ -865,7 +864,7 @@ function renderLeague() {
   const users = getUsers();
   const list = Object.values(users).map(u => ({ name: u.name, xp: u.stats?.xp || 0 }));
   list.sort((a, b) => b.xp - a.xp);
-  D.leagueList.innerHTML = list.map((r, i) => '<li><span class="league-idx">#' + (i + 1) + '</span><span class="league-name">' + r.name + (r.name === S.user?.name ? ' (you)' : '') + '</span><span class="league-xp">' + r.xp + ' XP</span></li>').join("");
+  D.leagueList.innerHTML = list.map((r, i) => '<li><span class="league-rank">#' + (i + 1) + '</span><span class="league-name">' + r.name + (r.name === S.user?.name ? ' (you)' : '') + '</span><span class="league-xp">' + r.xp + ' XP</span></li>').join("");
 }
 
 // ── Settings ──
@@ -907,6 +906,7 @@ async function checkUpdate() {
 function renderAll() {
   renderMap(); refreshXP(); refreshHearts(); refreshStreak();
   renderProfile(); renderBadges(); renderDaily(); renderWeak();
+  renderShop(); renderLeague();
 }
 
 // ── Saved Users ──
@@ -944,7 +944,7 @@ function init() {
   D.logoutBtn.addEventListener("click", logout);
 
   // Nav
-  $$(".nav-btn").forEach(b => b.addEventListener("click", () => { sndClick(); goPage(b.dataset.page); }));
+  $$(".bnav-btn").forEach(b => b.addEventListener("click", () => { sndClick(); goPage(b.dataset.page); }));
   // Profile button in top bar
   const profileBtn = document.getElementById("profileBtn");
   if (profileBtn) profileBtn.addEventListener("click", () => { sndClick(); goPage("pageProfile"); });
