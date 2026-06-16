@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icons/icon-192.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="icons/icon-192.svg" />
-  <link rel="stylesheet" href="styles.css?v=4.2.1" />
+  <link rel="stylesheet" href="styles.css?v=5.0.0" />
 </head>
 <body>
 
@@ -47,81 +47,14 @@
     <button class="hdr-btn" id="settingsBtn"><i class="i-gear"></i></button>
   </header>
 
-  <main class="main">
-    <!-- HOME -->
-    <section class="pg active" id="pageHome">
-      <div class="mascot-row">
-        <div class="mascot-face">🦁</div>
-        <div class="mascot-speech">
-          <b id="greetLine">Ready to learn?</b>
-          <p class="muted" id="greetSub">Choose a lesson below!</p>
-        </div>
-      </div>
-      <div class="xp-row">
-        <span class="xp-label">Lv.<b id="levelDisplay">1</b></span>
-        <div class="xp-track"><div class="xp-bar" id="xpBarFill"></div></div>
-        <span class="xp-num" id="xpProgressText">0/100</span>
-        <button class="hdr-btn" id="dailyBtn"><i class="i-target"></i></button>
-      </div>
-      <div class="practice-bar" id="practiceBanner" style="display:none">
-        <div><b>Practice Weak Areas</b><br><small id="practiceDesc" style="opacity:.85"></small></div>
-        <button class="btn btn-sm btn-blue" id="practiceBtn">Start</button>
-      </div>
-      <div class="map" id="lessonMap"></div>
-    </section>
-
-    <!-- PROFILE -->
-    <section class="pg" id="pageProfile">
-      <div class="prof-top">
-        <div class="avatar-circle lg orange">SS</div>
-        <h2 id="profileName">Learner</h2>
-        <small class="muted" id="profileRole">Student</small>
-      </div>
-      <div class="grid3">
-        <div class="statbox"><div class="statbox-ic fire"><i class="i-fire"></i></div><b id="statStreak">0</b><small>Streak</small></div>
-        <div class="statbox"><div class="statbox-ic gold"><i class="i-star"></i></div><b id="statStars">0</b><small>Stars</small></div>
-        <div class="statbox"><div class="statbox-ic purple"><i class="i-star"></i></div><b id="statXP">0</b><small>XP</small></div>
-        <div class="statbox"><div class="statbox-ic green"><i class="i-book"></i></div><b id="statLessons">0</b><small>Lessons</small></div>
-        <div class="statbox"><div class="statbox-ic blue"><i class="i-check"></i></div><b id="statCorrect">0</b><small>Correct</small></div>
-        <div class="statbox"><div class="statbox-ic pink"><i class="i-book"></i></div><b id="statWords">0</b><small>Words</small></div>
-      </div>
-      <div class="section"><h3>Badges</h3><div class="badge-row" id="badgeGrid"></div></div>
-      <div class="section"><h3>Weak Areas</h3><div id="weaknessList"></div></div>
-      <button class="btn btn-outline btn-block" id="logoutBtn">Log Out</button>
-    </section>
-
-    <!-- SHOP -->
-    <section class="pg" id="pageShop">
-      <h2>Shop</h2>
-      <p class="muted">Use stars to buy items</p>
-      <div class="shop-coins"><b id="shopStars">0</b> stars</div>
-      <div class="shop-list" id="shopGrid"></div>
-    </section>
-
-    <!-- LEADERBOARD -->
-    <section class="pg" id="pageLeaderboard">
-      <h2>Leaderboard</h2>
-      <p class="muted">Top learners</p>
-      <ol class="league" id="leagueList"></ol>
-    </section>
+  <main class="main" id="mainArea">
+    <!-- Content rendered by JS -->
   </main>
 </div>
 
-<!-- ONE DIALOG -->
-<dialog class="dlg dlg-lg" id="mainDialog">
-  <div class="dlg-top"><span class="dlg-prog" id="dlgProgress"></span><div class="lesson-hp" id="lessonHearts"></div><span class="lesson-timer" id="lessonTimer"></span><button class="dlg-x" id="closeDlg">&times;</button></div>
-  <div class="prog-bar" id="dlgProgBar" style="display:none"><div class="prog-fill" id="dlgProgFill"></div></div>
-  <div class="dlg-body" id="dlgBody"></div>
-  <div class="dlg-bottom" id="dlgBottom">
-    <div class="fb" id="feedbackBox"></div>
-    <button class="btn btn-green btn-block" id="checkButton" style="display:none">Check</button>
-    <button class="btn-flat" id="skipButton" style="display:none">Skip</button>
-  </div>
-</dialog>
-
 <div class="toasts" id="toastWrap"></div>
 
-<script src="lessons.js?v=4.2.1"></script>
-<script src="app.js?v=4.2.1"></script>
+<script src="lessons.js?v=5.0.0"></script>
+<script src="app.js?v=5.0.0"></script>
 </body>
 </html>

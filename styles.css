@@ -227,6 +227,29 @@ dialog::backdrop{background:rgba(0,0,0,.4);backdrop-filter:blur(4px)}
 .xp-float{position:fixed;pointer-events:none;z-index:100;font-size:1.3rem;font-weight:800;color:var(--o);animation:xpUp .9s ease-out forwards}
 @keyframes xpUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-60px) scale(1.2)}}
 
+/* ── Exercise Screen (inline) ── */
+.ex-screen{display:flex;flex-direction:column;min-height:calc(100dvh - 60px);padding:0}
+.ex-header{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--bd)}
+.ex-close{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:1.2rem;color:var(--t2);cursor:pointer;transition:background .15s}
+.ex-close:hover{background:rgba(0,0,0,.06)}
+.ex-prog{font-weight:700;font-size:.85rem;color:var(--g);flex:1;text-align:center}
+.ex-hp{font-size:.7rem}
+.ex-timer{font-weight:700;font-size:.85rem;color:var(--r)}
+.ex-body{flex:1;padding:16px;overflow-y:auto;display:flex;flex-direction:column;justify-content:center;align-items:center}
+.ex-bottom{padding:12px 16px 16px}
+
+/* ── Home Nav ── */
+.home-nav{display:flex;gap:8px;margin-top:16px}
+.home-nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 8px;background:var(--c);border-radius:var(--R);box-shadow:var(--sh);font-size:.7rem;font-weight:600;color:var(--t2);transition:all .15s}
+.home-nav-btn:hover{border-color:var(--b);color:var(--b)}
+
+/* ── Celebration Tags ── */
+.celeb-tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:14px 0 18px}
+.celeb-tags span{padding:8px 14px;border-radius:var(--Rs);font-weight:700;font-size:.8rem}
+.xp-tag{background:rgba(255,150,0,.1);color:var(--o)}
+.badge-tag{background:rgba(206,130,255,.1);color:var(--p)}
+.star-tag{background:rgba(255,200,0,.1);color:var(--gd)}
+
 @media(max-width:380px){.opt-grid{grid-template-columns:1fr}.grid3{grid-template-columns:repeat(2,1fr)}}
 
 /* ── Notification Toast (in-app) ── */
