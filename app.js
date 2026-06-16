@@ -102,7 +102,31 @@ const SWAHILI = {
   name: "jina", age: "umri", country: "nchi", city: "jiji",
   animal: "mnyama", bird: "ndege", fish: "samaki", cow: "ng'ombe",
   chicken: "kuku", rice: "mchele", milk: "maziwa", tea: "chai",
-  car: "gari", bus: "basi", plane: "ndege", train: "treini"
+  car: "gari", bus: "basi", plane: "ndege", train: "treini",
+  // Unit 5 - Wild Safari
+  rhino: "kifaru", buffalo: "nyati", cheetah: "duma", crocodile: "mamba",
+  hyena: "fisi", warthog: "ngiri", mountain: "mlima",
+  // Unit 6 - Actions & Fun
+  run: "kukimbia", jump: "kuruka", sleep: "kulala", sing: "kuimba",
+  dance: "kucheza", shirt: "shati", pants: "suruali", shoes: "viatu",
+  hat: "kofia", dress: "gauni", socks: "soksi",
+  // Unit 7 - School & Learning
+  student: "mwanafunzi", classroom: "darasa", homework: "kazi ya nyumbani",
+  paper: "karatasi", circle: "duara", square: "mraba", triangle: "pembetatu",
+  rectangle: "mstatili",
+  // Unit 8 - Weather & Time
+  sunny: "jua kali", rainy: "mvua", cloudy: "wingu", windy: "upepo",
+  hot: "joto", cold: "baridi", storm: "dhoruba",
+  monday: "jumatatu", tuesday: "jumanne", wednesday: "jumatano",
+  thursday: "alhamisi", friday: "ijumaa", saturday: "jumamosi", sunday: "jumapili",
+  // Unit 9 - Transport & Places
+  bicycle: "baisikeli", motorcycle: "boda boda", boat: "mashua",
+  hospital: "hospitali", market: "soko", church: "kanisa", shop: "duka",
+  park: "bustani", library: "maktaba",
+  // Unit 10 - Emotions & People
+  angry: "hasira", scared: "wasiwasi", tired: "uchovu", excited: "msisimko",
+  doctor: "daktari", nurse: "nurse", farmer: "mkulima", cook: "mpishi",
+  driver: "dereva", police: "polisi", artist: "msanaa"
 };
 
 // ══════════════════════════════════════

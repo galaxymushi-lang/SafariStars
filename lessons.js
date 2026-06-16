@@ -206,5 +206,145 @@ const LESSONS = [
       { type: "listen", question: "What do you hear?", audio: "shoes", display: ["Shati", "Suruali", "Viatu", "Kofia"], correct: 2 },
     ],
     words: [{ en: "Shirt", sw: "Shati" }, { en: "Pants", sw: "Suruali" }, { en: "Shoes", sw: "Viatu" }, { en: "Hat", sw: "Kofia" }]
+  },
+  // ── Unit 7 - School & Learning ──
+  {
+    id: "school",
+    unit: "Unit 7 - School & Learning",
+    title: "School",
+    icon: "🏫",
+    category: "vocabulary",
+    guide: `<h4>School - Shule</h4><p>Learn school words!</p><h4>Key Words</h4><ul><li><b>Book</b> = Kitabu</li><li><b>Pen</b> = Kalamu</li><li><b>Teacher</b> = Mwalimu</li><li><b>Student</b> = Mwanafunzi</li><li><b>Classroom</b> = Darasa</li><li><b>Homework</b> = Kazi ya nyumbani</li><li><b>Paper</b> = Karatasi</li></ul>`,
+    exercises: [
+      { type: "multiple", question: "What does 'Kitabu' mean in English?", options: ["Pen", "Book", "Paper", "Teacher"], correct: 1 },
+      { type: "fillblank", sentence: "The ___ teaches students in class.", answer: "teacher", options: ["teacher", "student", "book", "pen"] },
+      { type: "match", pairs: [["Book", "Kitabu"], ["Pen", "Kalamu"], ["Teacher", "Mwalimu"], ["Student", "Mwanafunzi"]] },
+      { type: "multiple", question: "What is 'Darasa' in English?", options: ["Book", "School", "Classroom", "Homework"], correct: 2 },
+      { type: "tap", phrase: "the teacher reads a book", words: ["the", "teacher", "reads", "a", "book", "pen"] },
+      { type: "listen", question: "What do you hear?", audio: "book", display: ["Kalamu", "Kitabu", "Karatasi", "Darasa"], correct: 1 },
+    ],
+    words: [{ en: "Book", sw: "Kitabu" }, { en: "Pen", sw: "Kalamu" }, { en: "Teacher", sw: "Mwalimu" }, { en: "Student", sw: "Mwanafunzi" }]
+  },
+  {
+    id: "shapes",
+    unit: "Unit 7 - School & Learning",
+    title: "Shapes & Numbers",
+    icon: "🔷",
+    category: "vocabulary",
+    guide: `<h4>Shapes - Umbo</h4><p>Learn shapes!</p><h4>Key Words</h4><ul><li><b>Circle</b> = Duara</li><li><b>Square</b> = Mraba</li><li><b>Triangle</b> = Pembetatu</li><li><b>Rectangle</b> = Mstatili</li><li><b>Star</b> = Nyota</li><li><b>Heart</b> = Mwamba</li></ul>`,
+    exercises: [
+      { type: "multiple", question: "What does 'Duara' mean in English?", options: ["Square", "Circle", "Triangle", "Star"], correct: 1 },
+      { type: "fillblank", sentence: "A ___ has four equal sides.", answer: "square", options: ["square", "circle", "triangle", "rectangle"] },
+      { type: "match", pairs: [["Circle", "Duara"], ["Square", "Mraba"], ["Triangle", "Pembetatu"], ["Star", "Nyota"]] },
+      { type: "multiple", question: "What is 'Pembetatu' in English?", options: ["Circle", "Square", "Rectangle", "Triangle"], correct: 3 },
+      { type: "tap", phrase: "a red circle", words: ["a", "red", "circle", "square", "blue"] },
+      { type: "listen", question: "What shape do you hear?", audio: "triangle", display: ["Duara", "Mraba", "Pembetatu", "Nyota"], correct: 2 },
+    ],
+    words: [{ en: "Circle", sw: "Duara" }, { en: "Square", sw: "Mraba" }, { en: "Triangle", sw: "Pembetatu" }, { en: "Star", sw: "Nyota" }]
+  },
+  // ── Unit 8 - Weather & Time ──
+  {
+    id: "weather",
+    unit: "Unit 8 - Weather & Time",
+    title: "Weather",
+    icon: "☀️",
+    category: "vocabulary",
+    guide: `<h4>Weather - Hali ya Hewa</h4><p>Learn weather words!</p><h4>Key Words</h4><ul><li><b>Sunny</b> = Jua kali</li><li><b>Rainy</b> = Mvua</li><li><b>Cloudy</b> = Wingu</li><li><b>Windy</b> = Upepo</li><li><b>Hot</b> = Joto</li><li><b>Cold</b> = Baridi</li><li><b>Storm</b> = Dhoruba</li></ul>`,
+    exercises: [
+      { type: "multiple", question: "What does 'Baridi' mean in English?", options: ["Hot", "Cold", "Rainy", "Sunny"], correct: 1 },
+      { type: "fillblank", sentence: "When it is ___, you can see the sun.", answer: "sunny", options: ["sunny", "rainy", "cloudy", "windy"] },
+      { type: "match", pairs: [["Sunny", "Jua kali"], ["Rainy", "Mvua"], ["Cloudy", "Wingu"], ["Windy", "Upepo"]] },
+      { type: "multiple", question: "What is 'Upepo' in English?", options: ["Rain", "Wind", "Cloud", "Storm"], correct: 1 },
+      { type: "tap", phrase: "it is hot today", words: ["it", "is", "hot", "cold", "today"] },
+      { type: "listen", question: "What weather do you hear?", audio: "rainy", display: ["Jua kali", "Mvua", "Wingu", "Baridi"], correct: 1 },
+    ],
+    words: [{ en: "Sunny", sw: "Jua kali" }, { en: "Rainy", sw: "Mvua" }, { en: "Cloudy", sw: "Wingu" }, { en: "Windy", sw: "Upepo" }]
+  },
+  {
+    id: "time",
+    unit: "Unit 8 - Weather & Time",
+    title: "Time & Days",
+    icon: "⏰",
+    category: "vocabulary",
+    guide: `<h4>Time - Muda</h4><p>Learn time and days!</p><h4>Key Words</h4><ul><li><b>Monday</b> = Jumatatu</li><li><b>Tuesday</b> = Jumanne</li><li><b>Wednesday</b> = Jumatano</li><li><b>Thursday</b> = Alhamisi</li><li><b>Friday</b> = Ijumaa</li><li><b>Saturday</b> = Jumamosi</li><li><b>Sunday</b> = Jumapili</li><li><b>Today</b> = Leo</li><li><b>Tomorrow</b> = Kesho</li><li><b>Yesterday</b> = Jana</li></ul>`,
+    exercises: [
+      { type: "multiple", question: "What does 'Kesho' mean in English?", options: ["Today", "Tomorrow", "Yesterday", "Monday"], correct: 1 },
+      { type: "fillblank", sentence: "___ comes after Saturday.", answer: "Sunday", options: ["Sunday", "Monday", "Friday", "Wednesday"] },
+      { type: "match", pairs: [["Today", "Leo"], ["Tomorrow", "Kesho"], ["Yesterday", "Jana"], ["Monday", "Jumatatu"]] },
+      { type: "multiple", question: "What is 'Ijumaa' in English?", options: ["Thursday", "Friday", "Saturday", "Sunday"], correct: 1 },
+      { type: "tap", phrase: "see you tomorrow", words: ["see", "you", "tomorrow", "yesterday", "today"] },
+      { type: "listen", question: "What day do you hear?", audio: "friday", display: ["Jumatatu", "Alhamisi", "Ijumaa", "Jumapili"], correct: 2 },
+    ],
+    words: [{ en: "Today", sw: "Leo" }, { en: "Tomorrow", sw: "Kesho" }, { en: "Yesterday", sw: "Jana" }, { en: "Monday", sw: "Jumatatu" }]
+  },
+  // ── Unit 9 - Transport & Places ──
+  {
+    id: "transport",
+    unit: "Unit 9 - Transport & Places",
+    title: "Transport",
+    icon: "🚗",
+    category: "vocabulary",
+    guide: `<h4>Transport - Usafiri</h4><p>Learn transport words!</p><h4>Key Words</h4><ul><li><b>Car</b> = Gari</li><li><b>Bus</b> = Basi</li><li><b>Bicycle</b> = Baisikeli</li><li><b>Motorcycle</b> = Boda boda</li><li><b>Train</b> = Treni</li><li><b>Plane</b> = Ndege</li><li><b>Boat</b> = Mashua</li></ul>`,
+    exercises: [
+      { type: "multiple", question: "What does 'Ndege' mean in English?", options: ["Car", "Bus", "Plane", "Train"], correct: 2 },
+      { type: "fillblank", sentence: "You ride a ___ to go to school.", answer: "bicycle", options: ["bicycle", "car", "plane", "boat"] },
+      { type: "match", pairs: [["Car", "Gari"], ["Bus", "Basi"], ["Bicycle", "Baisikeli"], ["Train", "Treni"]] },
+      { type: "multiple", question: "What is 'Mashua' in English?", options: ["Car", "Boat", "Bus", "Motorcycle"], correct: 1 },
+      { type: "tap", phrase: "the car is fast", words: ["the", "car", "is", "bus", "fast", "slow"] },
+      { type: "listen", question: "What transport do you hear?", audio: "bicycle", display: ["Gari", "Basi", "Baisikeli", "Treni"], correct: 2 },
+    ],
+    words: [{ en: "Car", sw: "Gari" }, { en: "Bus", sw: "Basi" }, { en: "Bicycle", sw: "Baisikeli" }, { en: "Plane", sw: "Ndege" }]
+  },
+  {
+    id: "places",
+    unit: "Unit 9 - Transport & Places",
+    title: "Places",
+    icon: "🏙️",
+    category: "vocabulary",
+    guide: `<h4>Places - Maeneo</h4><p>Learn place names!</p><h4>Key Words</h4><ul><li><b>Hospital</b> = Hospitali</li><li><b>Market</b> = Soko</li><li><b>Church</b> = Kanisa</li><li><b>School</b> = Shule</li><li><b>Home</b> = Nyumbani</li><li><b>Shop</b> = Duka</li><li><b>Park</b> = Bustani</li><li><b>Library</b> = Maktaba</li></ul>`,
+    exercises: [
+      { type: "multiple", question: "What does 'Hospitali' mean in English?", options: ["School", "Hospital", "Market", "Church"], correct: 1 },
+      { type: "fillblank", sentence: "You go to the ___ to buy things.", answer: "market", options: ["market", "church", "school", "hospital"] },
+      { type: "match", pairs: [["Hospital", "Hospitali"], ["Market", "Soko"], ["Church", "Kanisa"], ["School", "Shule"]] },
+      { type: "multiple", question: "What is 'Maktaba' in English?", options: ["Shop", "Park", "Library", "Home"], correct: 2 },
+      { type: "tap", phrase: "I go to school", words: ["I", "go", "to", "school", "market", "home"] },
+      { type: "listen", question: "What place do you hear?", audio: "hospital", display: ["Soko", "Hospitali", "Kanisa", "Duka"], correct: 1 },
+    ],
+    words: [{ en: "Hospital", sw: "Hospitali" }, { en: "Market", sw: "Soko" }, { en: "Church", sw: "Kanisa" }, { en: "School", sw: "Shule" }]
+  },
+  // ── Unit 10 - Emotions & People ──
+  {
+    id: "emotions",
+    unit: "Unit 10 - Emotions & People",
+    title: "Emotions",
+    icon: "😊",
+    category: "vocabulary",
+    guide: `<h4>Emotions - Hisia</h4><p>Learn emotion words!</p><h4>Key Words</h4><ul><li><b>Happy</b> = Furaha</li><li><b>Sad</b> = Huzuni</li><li><b>Angry</b> = Hasira</li><li><b>Scared</b> = Wasiwasi</li><li><b>Tired</b> = Uchovu</li><li><b>Excited</b> = Msisimko</li><li><b>Love</b> = Upendo</li></ul>`,
+    exercises: [
+      { type: "multiple", question: "What does 'Furaha' mean in English?", options: ["Sad", "Happy", "Angry", "Scared"], correct: 1 },
+      { type: "fillblank", sentence: "When you are ___, you smile.", answer: "happy", options: ["happy", "sad", "angry", "tired"] },
+      { type: "match", pairs: [["Happy", "Furaha"], ["Sad", "Huzuni"], ["Angry", "Hasira"], ["Scared", "Wasiwasi"]] },
+      { type: "multiple", question: "What is 'Uchovu' in English?", options: ["Excited", "Love", "Tired", "Happy"], correct: 2 },
+      { type: "tap", phrase: "I am very happy", words: ["I", "am", "very", "happy", "sad", "angry"] },
+      { type: "listen", question: "What emotion do you hear?", audio: "happy", display: ["Huzuni", "Furaha", "Hasira", "Uchovu"], correct: 1 },
+    ],
+    words: [{ en: "Happy", sw: "Furaha" }, { en: "Sad", sw: "Huzuni" }, { en: "Angry", sw: "Hasira" }, { en: "Love", sw: "Upendo" }]
+  },
+  {
+    id: "jobs",
+    unit: "Unit 10 - Emotions & People",
+    title: "Jobs",
+    icon: "👩‍⚕️",
+    category: "vocabulary",
+    guide: `<h4>Jobs - Kazi</h4><p>Learn job names!</p><h4>Key Words</h4><ul><li><b>Doctor</b> = Daktari</li><li><b>Nurse</b> = Nurse</li><li><b>Farmer</b> = Mkulima</li><li><b>Cook</b> = Mpishi</li><li><b>Driver</b> = Dereva</li><li><b>Police</b> = Polisi</li><li><b>Artist</b> = Msanaa</li></ul>`,
+    exercises: [
+      { type: "multiple", question: "What does 'Daktari' mean in English?", options: ["Nurse", "Doctor", "Farmer", "Driver"], correct: 1 },
+      { type: "fillblank", sentence: "A ___ grows food on a farm.", answer: "farmer", options: ["farmer", "doctor", "cook", "driver"] },
+      { type: "match", pairs: [["Doctor", "Daktari"], ["Farmer", "Mkulima"], ["Cook", "Mpishi"], ["Driver", "Dereva"]] },
+      { type: "multiple", question: "What is 'Dereva' in English?", options: ["Police", "Doctor", "Driver", "Nurse"], correct: 2 },
+      { type: "tap", phrase: "the doctor helps people", words: ["the", "doctor", "helps", "people", "farmer", "cook"] },
+      { type: "listen", question: "What job do you hear?", audio: "doctor", display: ["Mkulima", "Daktari", "Mpishi", "Dereva"], correct: 1 },
+    ],
+    words: [{ en: "Doctor", sw: "Daktari" }, { en: "Farmer", sw: "Mkulima" }, { en: "Cook", sw: "Mpishi" }, { en: "Driver", sw: "Dereva" }]
   }
 ];
