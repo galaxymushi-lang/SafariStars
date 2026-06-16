@@ -489,10 +489,19 @@ function finishPlacement() {
     weakHTML = "<p style='color:var(--green);font-weight:600'>🎉 No weak areas detected!</p>";
   }
 
-  // Unlock lessons based on placement
-  if (pct >= 80) { ["greetings","numbers","family","colors","food","animals","body","phrases"].forEach(id => { S.progress[id] = { completed: true, bestScore: 100 }; }); }
-  else if (pct >= 60) { ["greetings","numbers","family","colors"].forEach(id => { S.progress[id] = { completed: true, bestScore: 100 }; }); }
-  else if (pct >= 40) { ["greetings","numbers"].forEach(id => { S.progress[id] = { completed: true, bestScore: 80 }; }); }
+  // Unlock lessons based on placement (don't mark as completed - just unlock)
+  function unlockUpTo(lessonId) {
+    const idx = LESSONS.findIndex(l => l.id === lessonId);
+    if (idx < 0) return;
+    // Mark this lesson and all before it as unlocked (not completed)
+    for (let i = 0; i <= idx; i++) {
+      const lid = LESSONS[i].id;
+      if (!S.progress[lid]) S.progress[lid] = { completed: false, bestScore: 0, unlocked: true };
+    }
+  }
+  if (pct >= 80) unlockUpTo("phrases");
+  else if (pct >= 60) unlockUpTo("colors");
+  else if (pct >= 40) unlockUpTo("numbers");
   save();
 
   setTimeout(() => showCeleb("placement", { emoji, title, desc: placeScore + "/" + placeQs.length + " correct (" + pct + "%)", level, weakHTML }), 300);
@@ -514,7 +523,8 @@ function renderMap() {
       const p = S.progress[l.id]; const done = p?.completed; const score = p?.bestScore || 0;
       const li = LESSONS.findIndex(x => x.id === l.id);
       const prevDone = li === 0 || S.progress[LESSONS[li - 1].id]?.completed;
-      const locked = !done && !prevDone;
+      const isUnlocked = S.progress[l.id]?.unlocked;
+      const locked = !done && !prevDone && !isUnlocked;
       html += `<div class="lesson-card ${done ? 'done' : ''} ${locked ? 'locked' : ''}" data-id="${l.id}">
         <div class="lc-icon">${locked ? '🔒' : l.icon}</div>
         <div class="lc-info">
@@ -950,7 +960,19 @@ function init() {
 
   // Celebration
   D.celebContinue.addEventListener("click", () => D.celebDialog.close());
-  D.resultContinue.addEventListener("click", () => { D.resultDialog.close(); renderAll(); });
+  D.resultContinue.addEventListener("click", closeResult);
+  // Also bind via setTimeout in case dialog isn't ready yet
+  setTimeout(() => {
+    const btn = document.getElementById("resultContinue");
+    if (btn) btn.addEventListener("click", closeResult);
+  }, 100);
+
+function closeResult() {
+  D.resultDialog.close();
+  renderAll();
+}
+// Expose globally for onclick fallback
+window.closeResult = closeResult;
 
   // Practice
   D.practiceBtn.addEventListener("click", () => {
