@@ -881,7 +881,16 @@ async function checkUpdate() {
     const r = await fetch("https://galaxymushi-lang.github.io/SafariStars/version.json?t=" + Date.now());
     if (!r.ok) return;
     const v = await r.json();
-    if (v.version && v.version !== VER) toast("Update v" + v.version + " available!", "info");
+    if (v.version && v.version !== VER) {
+      // Show update banner with refresh button
+      let banner = document.getElementById("updateBanner");
+      if (banner) banner.remove();
+      banner = document.createElement("div");
+      banner.id = "updateBanner";
+      banner.style.cssText = "position:fixed;bottom:0;left:0;right:0;z-index:9999;background:var(--green);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.85rem;box-shadow:0 -2px 12px rgba(0,0,0,.2);animation:fadeUp .3s ease-out";
+      banner.innerHTML = '<span><strong>Update v' + v.version + '</strong> is ready!</span><button onclick="location.reload()" style="padding:8px 20px;border:none;border-radius:10px;background:#fff;color:var(--green);font-weight:700;cursor:pointer;font-size:.85rem;box-shadow:0 2px 8px rgba(0,0,0,.15)">Refresh</button>';
+      document.body.appendChild(banner);
+    }
   } catch {}
 }
 
