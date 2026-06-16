@@ -1,4 +1,4 @@
-const CACHE = "safari-stars-v7";
+const CACHE = "safari-stars-v10";
 const FILES = [
   "./",
   "./index.html",

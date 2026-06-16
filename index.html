@@ -12,6 +12,15 @@
 </head>
 <body>
 
+<!-- no update banner -->
+
+<!-- NOTIFICATION TOAST -->
+<div class="notif-toast" id="notifToast" style="display:none">
+  <span class="nt-icon" id="notifIcon">🔔</span>
+  <span class="nt-text" id="notifText"></span>
+  <button class="nt-close" id="notifClose">&times;</button>
+</div>
+
 <!-- AUTH -->
 <section class="auth" id="authScreen">
   <div class="auth-card">
@@ -29,7 +38,7 @@
 </section>
 
 <!-- PLACEMENT -->
-<dialog class="dlg" id="placementDialog">
+<dialog class="dlg dlg-lg" id="placementDialog">
   <div class="dlg-top"><span class="dlg-prog" id="placementProgress">1/12</span><button class="dlg-x" id="placementClose">&times;</button></div>
   <div class="prog-bar"><div class="prog-fill" id="placementBarFill"></div></div>
   <div class="dlg-body" id="placementBody"></div>
@@ -68,16 +77,7 @@
     <!-- HOME -->
     <section class="pg active" id="pageHome">
       <div class="mascot-row">
-        <div class="mascot-face">
-          <div class="mf-ear mf-ear-l"></div>
-          <div class="mf-ear mf-ear-r"></div>
-          <div class="mf-head">
-            <div class="mf-eye mf-eye-l"></div>
-            <div class="mf-eye mf-eye-r"></div>
-            <div class="mf-nose"></div>
-            <div class="mf-mouth"></div>
-          </div>
-        </div>
+        <div class="mascot-face">🦁</div>
         <div class="mascot-speech">
           <b id="greetLine">Ready to learn?</b>
           <p class="muted" id="greetSub">Choose a lesson below!</p>

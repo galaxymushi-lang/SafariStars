@@ -1,8 +1,13 @@
 {
-  "version": "4.1.1",
-  "releaseDate": "2026-06-15",
+  "version": "4.2.1",
+  "releaseDate": "2026-06-16",
   "updateUrl": "https://galaxymushi-lang.github.io/SafariStars/",
   "changelog": [
+    "20 modern Safari-themed badges (animals, achievements, time-based)",
+    "Online word fetching from Datamuse API (like Duolingo)",
+    "Dismissible refresh/update banner",
+    "Notification permissions & daily reminders",
+    "Perfect score & badge notifications",
     "Placement test - diagnoses your level on first use",
     "Weak areas tracking - focuses on what you get wrong",
     "Adaptive practice banner - recommends weak categories",

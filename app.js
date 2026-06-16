@@ -2,7 +2,7 @@
 "use strict";
 const P = "ss4_";
 const K = { U: P+"users", C: P+"cur", V: P+"ver", S: P+"set", W: P+"weak", PL: P+"placed" };
-const VER = "4.1.0";
+const VER = "4.2.1";
 const $ = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
 
@@ -28,30 +28,39 @@ function grab() {
 }
 
 const MSG = {
-  idle: ["Ready to learn?","You can do this! 💪","New adventure! 🌟","Let's go! 🚀","I believe in you! ❤️"],
-  correct: ["Amazing! 🎉","Great job! 👏","You're a star! ⭐","Fantastic! ✨","Brilliant! 💎","Superb! 🌈"],
-  wrong: ["Almost! 💪","Try again! 🌟","You'll get it! 🎯","Keep going! 🔥","Not yet! 📚"],
-  greet: ["Karibu! 👋","Welcome back! 🌅","Ready for fun? 🎮","Let's learn! 📚","Habari! 🦁"]
+  idle: ["Ready?","Let's go!","Your turn!","Nice to see you!","Time to learn!"],
+  correct: ["Correct!","Nice one!","You got it!","Exactly!","Right on!","Well done!"],
+  wrong: ["Not quite","Almost!","Try again","Close one!","Keep trying"],
+  greet: ["Welcome back!","Hey there!","Good to see you!","Let's go!","Ready?"]
 };
 
 const BADGES = [
-  {id:"first_lesson",icon:"🌟",name:"First Step",desc:"Complete 1 lesson"},
+  {id:"first_word",icon:"🐣",name:"First Steps",desc:"Learn your first word"},
   {id:"five_lessons",icon:"📚",name:"Bookworm",desc:"Complete 5 lessons"},
   {id:"ten_lessons",icon:"🎓",name:"Scholar",desc:"Complete 10 lessons"},
+  {id:"twenty_lessons",icon:"🏅",name:"Honor Roll",desc:"Complete 20 lessons"},
   {id:"streak_3",icon:"🔥",name:"On Fire",desc:"3-day streak"},
-  {id:"streak_7",icon:"⚡",name:"Lightning",desc:"7-day streak"},
-  {id:"words_10",icon:"📝",name:"Collector",desc:"Learn 10 words"},
+  {id:"streak_7",icon:"💎",name:"Week Warrior",desc:"7-day streak"},
+  {id:"streak_30",icon:"👑",name:"Unstoppable",desc:"30-day streak"},
+  {id:"words_10",icon:"📝",name:"Word Collector",desc:"Learn 10 words"},
   {id:"words_25",icon:"📖",name:"Storyteller",desc:"Learn 25 words"},
-  {id:"perfect",icon:"💎",name:"Diamond",desc:"Perfect lesson"},
-  {id:"xp_100",icon:"🏅",name:"Rising Star",desc:"100 XP earned"},
-  {id:"xp_500",icon:"🏆",name:"Safari Champ",desc:"500 XP earned"},
-  {id:"all_units",icon:"🌍",name:"Safari Master",desc:"All units done"}
+  {id:"words_50",icon:"🏆",name:"Vocabulary Master",desc:"Learn 50 words"},
+  {id:"perfect_3",icon:"⭐",name:"Rising Star",desc:"3 perfect lessons"},
+  {id:"perfect_10",icon:"🌟",name:"Superstar",desc:"10 perfect lessons"},
+  {id:"xp_100",icon:"🚀",name:"Level Up",desc:"Earn 100 XP"},
+  {id:"xp_500",icon:"🎖️",name:"Veteran",desc:"Earn 500 XP"},
+  {id:"xp_1000",icon:"🌍",name:"Globe Trotter",desc:"Earn 1000 XP"},
+  {id:"no_wrong",icon:"💎",name:"Diamond",desc:"Complete with 0 mistakes"},
+  {id:"speed_demon",icon:"⚡",name:"Speed Demon",desc:"Finish under 2 minutes"},
+  {id:"night_owl",icon:"🦉",name:"Night Owl",desc:"Study after 9 PM"},
+  {id:"early_bird",icon:"🌅",name:"Early Bird",desc:"Study before 8 AM"},
+  {id:"all_units",icon:"🎯",name:"Safari Master",desc:"Complete all units"}
 ];
 
 const SHOP = [
-  {id:"streak_freeze",name:"Streak Freeze",desc:"Protect streak 1 day",cost:50,icon:"🧊"},
-  {id:"hearts_refill",name:"Hearts Refill",desc:"Full hearts",cost:30,icon:"❤️"},
-  {id:"xp_boost",name:"XP Boost 30m",desc:"Double XP",cost:80,icon:"⚡"}
+  {id:"streak_freeze",name:"Streak Freeze",desc:"Protect your streak for 1 day",cost:50,icon:"🧊"},
+  {id:"hearts_refill",name:"Heart Refill",desc:"Refill all hearts to full",cost:30,icon:"❤️"},
+  {id:"xp_boost",name:"XP Boost",desc:"Double XP for 30 minutes",cost:80,icon:"⚡"}
 ];
 
 const DAILY = [
@@ -195,18 +204,34 @@ function checkBadges() {
   const owned = S.badges || [];
   const has = id => owned.some(b => b.id === id);
   const earn = [];
-  if (!has("first_lesson") && S.stats.lessonsDone >= 1) earn.push("first_lesson");
-  if (!has("five_lessons") && S.stats.lessonsDone >= 5) earn.push("five_lessons");
-  if (!has("ten_lessons") && S.stats.lessonsDone >= 10) earn.push("ten_lessons");
-  if (!has("streak_3") && S.streak >= 3) earn.push("streak_3");
-  if (!has("streak_7") && S.streak >= 7) earn.push("streak_7");
+  // Word badges
+  if (!has("first_word") && S.vocab.length >= 1) earn.push("first_word");
   if (!has("words_10") && S.vocab.length >= 10) earn.push("words_10");
   if (!has("words_25") && S.vocab.length >= 25) earn.push("words_25");
+  if (!has("words_50") && S.vocab.length >= 50) earn.push("words_50");
+  // Lesson badges
+  if (!has("five_lessons") && S.stats.lessonsDone >= 5) earn.push("five_lessons");
+  if (!has("ten_lessons") && S.stats.lessonsDone >= 10) earn.push("ten_lessons");
+  if (!has("twenty_lessons") && S.stats.lessonsDone >= 20) earn.push("twenty_lessons");
+  // Streak badges
+  if (!has("streak_3") && S.streak >= 3) earn.push("streak_3");
+  if (!has("streak_7") && S.streak >= 7) earn.push("streak_7");
+  if (!has("streak_30") && S.streak >= 30) earn.push("streak_30");
+  // XP badges
   if (!has("xp_100") && S.stats.xp >= 100) earn.push("xp_100");
   if (!has("xp_500") && S.stats.xp >= 500) earn.push("xp_500");
+  if (!has("xp_1000") && S.stats.xp >= 1000) earn.push("xp_1000");
+  // Perfect badges
+  const perfectCount = (S.badges || []).filter(b => b.id === "perfect_3" || b.id === "perfect_10").length;
+  if (!has("perfect_3") && S.stats.lessonsDone >= 3 && (S.stats.correct / Math.max(1, S.stats.correct + S.stats.wrong)) >= 0.95) earn.push("perfect_3");
+  // Time-based badges
+  const hour = new Date().getHours();
+  if (!has("night_owl") && hour >= 21 && S.stats.lessonsDone > 0) earn.push("night_owl");
+  if (!has("early_bird") && hour < 8 && S.stats.lessonsDone > 0) earn.push("early_bird");
   earn.forEach(id => {
     const b = BADGES.find(x => x.id === id);
-    if (b) { owned.push({ id, at: Date.now() }); sndBadge(); setTimeout(() => showCeleb("badge", b), 400); }
+    if (b) { owned.push({ id, at: Date.now() }); sndBadge(); setTimeout(() => showCeleb("badge", b), 400);
+      const set = getSet(); if (set.notif) sendNotif(b.icon + " New Badge!", "You earned: " + b.name); }
   });
   S.badges = owned; save(); renderBadges();
 }
@@ -214,7 +239,7 @@ function renderBadges() {
   if (!D.badgeGrid) return;
   D.badgeGrid.innerHTML = BADGES.map(b => {
     const ok = (S.badges || []).some(x => x.id === b.id);
-    return `<div class="badge-item ${ok ? 'unlocked' : 'locked'}" title="${b.desc}">${b.icon}<span class="badge-lbl">${b.name}</span></div>`;
+    return `<div class="badge-item ${ok ? 'unlocked' : 'locked'}" title="${b.desc}"><span class="badge-icon">${b.icon}</span><span class="badge-lbl">${b.name}</span></div>`;
   }).join("");
 }
 
@@ -362,6 +387,11 @@ function login(name, role) {
   localStorage.setItem(K.C, JSON.stringify({ name }));
   D.authScreen.style.display = "none"; D.appShell.classList.add("active");
   initDaily(); checkStreak(); regenHearts(); renderAll();
+  // Auto-fetch online words & notifications
+  autoFetchWords();
+  const set = getSet();
+  if (set.notif) requestNotifPermission();
+  setTimeout(() => { if (set.notif) scheduleDailyReminder(); }, 2000);
   // Check placement
   if (!S.placed) { setTimeout(startPlacement, 600); }
 }
@@ -825,8 +855,20 @@ function finishLesson() {
   markDay(); trackDaily("lesson", 1); if (perfect) trackDaily("perfect", 1);
   S.hearts = Math.min(5, S.hearts + 1); refreshHearts(); save();
   checkBadges(); renderWeak();
+  // Check no_wrong badge
+  if (_correct === total && total > 0) {
+    const owned = S.badges || [];
+    if (!owned.find(b => b.id === "no_wrong")) {
+      S.badges.push({ id: "no_wrong", at: Date.now() });
+      sndBadge();
+      setTimeout(() => showCeleb("badge", BADGES.find(b => b.id === "no_wrong")), 600);
+    }
+  }
   D.lessonDialog.close();
   setTimeout(() => showCeleb("lesson", { xp: perfect ? xp + 20 : xp, stars: perfect ? 10 : 5, perfect }), 300);
+  // Notify on perfect score
+  const set = getSet();
+  if (perfect && set.notif) sendNotif("💎 Perfect Score!", "You got 100% in " + curLesson.title + "! Amazing!");
 }
 
 // ── Profile ──
@@ -884,22 +926,96 @@ function exportData() {
 }
 
 // ── Auto-Update ──
-async function checkUpdate() {
-  try {
-    const r = await fetch("https://galaxymushi-lang.github.io/SafariStars/version.json?t=" + Date.now());
-    if (!r.ok) return;
-    const v = await r.json();
-    if (v.version && v.version !== VER) {
-      // Show update banner with refresh button
-      let banner = document.getElementById("updateBanner");
-      if (banner) banner.remove();
-      banner = document.createElement("div");
-      banner.id = "updateBanner";
-      banner.style.cssText = "position:fixed;bottom:0;left:0;right:0;z-index:9999;background:var(--g);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.85rem;box-shadow:0 -2px 12px rgba(0,0,0,.2);animation:fadeUp .3s ease-out";
-      banner.innerHTML = '<span><strong>Update v' + v.version + '</strong> is ready!</span><button onclick="location.reload()" style="padding:8px 20px;border:none;border-radius:10px;background:#fff;color:var(--g);font-weight:700;cursor:pointer;font-size:.85rem;box-shadow:0 2px 8px rgba(0,0,0,.15)">Refresh</button>';
-      document.body.appendChild(banner);
+// ── Online Word Fetch (Duolingo-style) ──
+const FETCH_CATEGORIES = ["animals","food","colors","family","body+parts","nature","school","home","travel","weather"];
+const FETCH_EMOJIS = ["🐶","🍎","🌈","👨‍👩‍👧","🦴","🌿","📚","🏠","✈️","☀️","🐱","🍊","🌺","👩","👁️","🌳","✏️","🛋️","🚗","❄️","🐰","🍋","🌻","👦","👂","🌙","🎒","🍳","🚌","🌧️"];
+async function fetchOnlineWords(count = 8) {
+  if (!navigator.onLine) return [];
+  const today = dateKey();
+  const lastFetch = localStorage.getItem("ss_lastOnlineFetch");
+  if (lastFetch === today) {
+    try { return JSON.parse(localStorage.getItem("ss_onlineWords") || "[]"); } catch { return []; }
+  }
+  const fetched = [];
+  const topics = [...FETCH_CATEGORIES].sort(() => Math.random() - 0.5).slice(0, 3);
+  for (const topic of topics) {
+    if (fetched.length >= count) break;
+    try {
+      const r = await fetch(`https://api.datamuse.com/words?topics=${topic}&md=d&max=${count * 2}`);
+      if (!r.ok) continue;
+      const data = await r.json();
+      const valid = data.filter(w => w.word.length >= 3 && w.word.length <= 10 && /^[a-z]+$/.test(w.word) && w.defs && w.defs.length > 0);
+      for (const v of valid) {
+        if (fetched.length >= count) break;
+        if (!fetched.find(f => f.en === v.word)) {
+          const def = v.defs[0] ? v.defs[0].replace(/^\w+\s*/, "") : "";
+          fetched.push({
+            en: v.word.charAt(0).toUpperCase() + v.word.slice(1),
+            sw: def || topic,
+            online: true,
+            icon: FETCH_EMOJIS[Math.floor(Math.random() * FETCH_EMOJIS.length)]
+          });
+        }
+      }
+    } catch {}
+  }
+  localStorage.setItem("ss_onlineWords", JSON.stringify(fetched));
+  localStorage.setItem("ss_lastOnlineFetch", today);
+  return fetched;
+}
+async function autoFetchWords() {
+  if (!S.user) return;
+  const words = await fetchOnlineWords(10);
+  if (words.length > 0) {
+    const existing = S.vocab.filter(v => v.online);
+    const newWords = words.filter(w => !existing.find(e => e.en === w.en));
+    if (newWords.length > 0) {
+      S.vocab.push(...newWords);
+      save();
+      showNotifToast("📥", "Fetched " + newWords.length + " new words from online!");
     }
-  } catch {}
+  }
+}
+
+// ── Notifications ──
+let notifPerm = "default";
+function requestNotifPermission() {
+  if (typeof Notification === "undefined") return;
+  if (Notification.permission === "granted") { notifPerm = "granted"; return; }
+  if (Notification.permission !== "denied") {
+    Notification.requestPermission().then(p => { notifPerm = p; if (p === "granted") scheduleDailyReminder(); });
+  }
+}
+function scheduleDailyReminder() {
+  if (notifPerm !== "granted") return;
+  const last = localStorage.getItem("ss_lastNotif");
+  const today = dateKey();
+  if (last === today) return;
+  setTimeout(() => {
+    try {
+      new Notification("🦁 Safari Stars", {
+        body: "Hey " + (S.user?.name || "there") + "! Time to practice English! 📚",
+        icon: "icons/icon-192.svg", tag: "safari-daily"
+      });
+      localStorage.setItem("ss_lastNotif", today);
+    } catch {}
+  }, 5000);
+}
+function sendNotif(title, body) {
+  if (notifPerm !== "granted") return;
+  try { new Notification(title, { body, icon: "icons/icon-192.svg", tag: "safari-info" }); } catch {}
+}
+function showNotifToast(icon, text) {
+  const t = document.getElementById("notifToast");
+  const ti = document.getElementById("notifIcon");
+  const tx = document.getElementById("notifText");
+  if (ti) ti.textContent = icon;
+  if (tx) tx.textContent = text;
+  if (t) { t.style.display = "flex"; setTimeout(() => { t.style.display = "none"; }, 4000); }
+}
+function dismissNotif() {
+  const t = document.getElementById("notifToast");
+  if (t) t.style.display = "none";
 }
 
 // ── Render All ──
@@ -1010,8 +1126,12 @@ function init() {
   // Heart regen
   setInterval(() => { if (S.user) regenHearts(); }, 60000);
 
-  // Auto-update
-  setTimeout(checkUpdate, 3000);
+  // Notification toast close
+  const ntClose = document.getElementById("notifClose");
+  if (ntClose) ntClose.addEventListener("click", dismissNotif);
+
+  // Notifications
+  requestNotifPermission();
 
   // Restore
   const saved = localStorage.getItem(K.C);
