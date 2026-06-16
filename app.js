@@ -381,8 +381,6 @@ function goPage(id) {
   $$(".nav-btn").forEach(b => b.classList.toggle("active", b.dataset.page === id));
   if (id === "pageHome") renderMap();
   if (id === "pageProfile") renderProfile();
-  if (id === "pageShop") renderShop();
-  if (id === "pageLeaderboard") renderLeague();
 }
 
 // ── Mascot ──
@@ -908,7 +906,7 @@ async function checkUpdate() {
 // ── Render All ──
 function renderAll() {
   renderMap(); refreshXP(); refreshHearts(); refreshStreak();
-  renderProfile(); renderShop(); renderLeague(); renderBadges(); renderDaily(); renderWeak();
+  renderProfile(); renderBadges(); renderDaily(); renderWeak();
 }
 
 // ── Saved Users ──
@@ -947,6 +945,9 @@ function init() {
 
   // Nav
   $$(".nav-btn").forEach(b => b.addEventListener("click", () => { sndClick(); goPage(b.dataset.page); }));
+  // Profile button in top bar
+  const profileBtn = document.getElementById("profileBtn");
+  if (profileBtn) profileBtn.addEventListener("click", () => { sndClick(); goPage("pageProfile"); });
 
   // Settings
   D.settingsBtn.addEventListener("click", async () => {

@@ -68,7 +68,8 @@
       <span class="top-pill hearts" id="heartsDisplay">❤️ 5</span>
       <span class="top-pill xp" id="xpDisplay">✨ 0</span>
     </div>
-    <button class="btn-round" id="settingsBtn">⚙️</button>
+    <button class="btn-round btn-sm" id="profileBtn" title="Profile">👤</button>
+    <button class="btn-round btn-sm" id="settingsBtn" title="Settings">⚙️</button>
   </header>
 
   <main class="main-content" id="mainContent">
@@ -101,7 +102,7 @@
     <!-- PROFILE -->
     <section class="page" id="pageProfile">
       <div class="profile-header">
-        <span class="profile-avatar" id="profileAvatar">🦁</span>
+        <span class="profile-avatar">🦁</span>
         <h2 id="profileName">Learner</h2>
         <span class="profile-role" id="profileRole">Child</span>
       </div>
@@ -113,37 +114,13 @@
         <div class="stat-card"><span class="stat-icon">✅</span><span class="stat-val" id="statCorrect">0</span><span class="stat-lbl">Correct</span></div>
         <div class="stat-card"><span class="stat-icon">📝</span><span class="stat-val" id="statWords">0</span><span class="stat-lbl">Words</span></div>
       </div>
-      <div class="badge-section">
-        <h3>🏅 Badges</h3>
-        <div class="badge-grid" id="badgeGrid"></div>
-      </div>
-      <div class="weakness-section">
-        <h3>📊 Weak Areas</h3>
-        <div id="weaknessList"></div>
-      </div>
       <button class="btn-secondary btn-full" id="logoutBtn">🚪 Log Out</button>
-    </section>
-
-    <!-- SHOP -->
-    <section class="page" id="pageShop">
-      <h2 class="page-title">🛒 Shop</h2>
-      <div class="shop-coins">⭐ <span id="shopStars">0</span> stars</div>
-      <div class="shop-grid" id="shopGrid"></div>
-    </section>
-
-    <!-- LEADERBOARD -->
-    <section class="page" id="pageLeaderboard">
-      <h2 class="page-title">🏆 Leaderboard</h2>
-      <p class="page-sub">Top learners this week</p>
-      <ol class="league-list" id="leagueList"></ol>
     </section>
   </main>
 
   <nav class="bottom-nav">
     <button class="nav-btn active" data-page="pageHome">🏠<span>Home</span></button>
     <button class="nav-btn" data-page="pageProfile">👤<span>Profile</span></button>
-    <button class="nav-btn" data-page="pageShop">🛒<span>Shop</span></button>
-    <button class="nav-btn" data-page="pageLeaderboard">🏆<span>League</span></button>
   </nav>
 </div>
 
