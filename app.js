@@ -70,6 +70,41 @@ const FETCH_EMOJIS = [
   "🐰","🍋","🌻","👦","👂","🌙","🎒","🍳","🚌","🌧️"
 ];
 
+const SWAHILI = {
+  hello: "habari", goodbye: "kwaheri", thank: "asante", please: "tafadhali",
+  water: "maji", food: "chakula", friend: "rafiki", family: "familia",
+  cat: "paka", dog: "mbwa", tree: "mti", sun: "jua", moon: "mwezi",
+  book: "kitabu", pen: "kalamu", school: "shule", teacher: "mwalimu",
+  big: "kubwa", small: "ndogo", good: "nzuri", bad: "mbaya",
+  one: "moja", two: "mbili", three: "tatu", four: "nne", five: "tano",
+  six: "sita", seven: "saba", eight: "nane", nine: "tisa", ten: "kumi",
+  red: "nyekundu", blue: "bluu", green: "kijani", yellow: "njano",
+  happy: "furaha", sad: "huzuni", eat: "kula", drink: "kunywa",
+  go: "kwenda", come: "kuja", see: "kuona", hear: "kusikia",
+  mother: "mama", father: "baba", sister: "dada", brother: "kaka",
+  grandmother: "bibi", grandfather: "babu", morning: "asubuhi",
+  afternoon: "mchana", evening: "jioni", night: "usiku",
+  apple: "tufaha", banana: "ndizi", mango: "embe", orange: "chungwa",
+  head: "kichwa", eye: "jicho", ear: "sikio", mouth: "mdomo",
+  hand: "mkono", leg: "mguu", heart: "moyo", blood: "damu",
+  beautiful: "nzuri", strong: "imara", fast: "haraka", slow: "taratibu",
+  open: "fungua", close: "funga", give: "pa", take: "chukua",
+  today: "leo", tomorrow: "kesho", yesterday: "jana", always: "daima",
+  yes: "ndio", no: "hapana", sorry: "pole",
+  house: "nyumba", door: "mlango", window: "dirisha", chair: "kiti",
+  table: "meza", bed: "kitanda", floor: "sakafu", wall: "ukuta",
+  boy: "mvulana", girl: "msichana", man: "mtu", woman: "mwanamke",
+  baby: "mtoto", old: "mzee", new: "mpya", first: "kwanza",
+  learn: "jifunze", read: "soma", write: "andika", speak: "ongea",
+  listen: "sikiliza", understand: "elewa", remember: "kumbuka",
+  star: "nyota", rain: "mvua", fire: "moto",
+  time: "wakati", clock: "saa", hour: "saa", minute: "dakika",
+  name: "jina", age: "umri", country: "nchi", city: "jiji",
+  animal: "mnyama", bird: "ndege", fish: "samaki", cow: "ng'ombe",
+  chicken: "kuku", rice: "mchele", milk: "maziwa", tea: "chai",
+  car: "gari", bus: "basi", plane: "ndege", train: "treini"
+};
+
 // ══════════════════════════════════════
 // STATE
 // ══════════════════════════════════════
@@ -472,38 +507,8 @@ function getDailyWord() {
   const unique = [...new Set(allWords.filter((w) => w && w.length >= 3))];
   if (unique.length === 0) return { en: "Hello", sw: "Habari" };
   const word = unique[seed % unique.length];
-  const swahiliMap = {
-    hello: "habari", goodbye: "kwaheri", thank: "asante", please: "tafadhali",
-    water: "maji", food: "chakula", friend: "rafiki", family: "familia",
-    cat: "paka", dog: "mbwa", tree: "mti", sun: "jua", moon: "mwezi",
-    book: "kitabu", pen: "kalamu", school: "shule", teacher: "mwalimu",
-    big: "kubwa", small: "ndogo", good: "nzuri", bad: "mbaya",
-    one: "moja", two: "mbili", three: "tatu", four: "nne", five: "tano",
-    six: "sita", seven: "saba", eight: "nane", nine: "tisa", ten: "kumi",
-    red: "nyekundu", blue: "bluu", green: "kijani", yellow: "njano",
-    happy: "furaha", sad: "huzuni", eat: "kula", drink: "kunywa",
-    go: "kwenda", come: "kuja", see: "kuona", hear: "kusikia",
-    mother: "mama", father: "baba", sister: "dada", brother: "kaka",
-    grandmother: "bibi", grandfather: "babu", morning: "asubuhi",
-    afternoon: "mchana", evening: "jioni", night: "usiku",
-    apple: "tufaha", banana: "ndizi", mango: "embe", orange: "chungwa",
-    head: "kichwa", eye: "jicho", ear: "sikio", mouth: "mdomo",
-    hand: "mkono", leg: "mguu", heart: "moyo", blood: "damu",
-    beautiful: "nzuri", strong: "imara", fast: "haraka", slow: "taratibu",
-    open: "fungua", close: "funga", give: "pa", take: "chukua",
-    today: "leo", tomorrow: "kesho", yesterday: "jana", always: "daima",
-    yes: "ndio", no: "hapana", sorry: "pole",
-    house: "nyumba", door: "mlango", window: "dirisha", chair: "kiti",
-    table: "meza", bed: "kitanda", floor: "sakafu", wall: "ukuta",
-    boy: "mvulana", girl: "msichana", man: "mtu", woman: "mwanamke",
-    baby: "mtoto", old: "mzee", new: "mpya", first: "kwanza",
-    learn: "jifunze", read: "soma", write: "andika", speak: "ongea",
-    listen: "sikiliza", understand: "elewa", remember: "kumbuka",
-    star: "nyota", moon: "mwezi", rain: "mvua", fire: "moto",
-    night: "usiku", today: "leo", tomorrow: "kesho", strong: "imara"
-  };
   const lower = word.toLowerCase();
-  return { en: word.charAt(0).toUpperCase() + word.slice(1), sw: swahiliMap[lower] || "—" };
+  return { en: word.charAt(0).toUpperCase() + word.slice(1), sw: SWAHILI[lower] || "—" };
 }
 
 // ══════════════════════════════════════
@@ -694,9 +699,7 @@ function renderPlacementQuestion() {
     +   '<div class="ex-body">'
     +     '<div class="placement-q">' + question.question + '</div>'
     +     '<div class="opt-grid">'
-    +       question.options.map((opt, i) =>
-    +         '<button class="opt-btn" data-idx="' + i + '">' + opt + '</button>'
-    +       ).join("")
+    +       question.options.map((opt, i) => '<button class="opt-btn" data-idx="' + i + '">' + opt + '</button>').join("")
     +     '</div>'
     +   '</div>'
     +   '<div class="ex-bottom">'
@@ -864,7 +867,7 @@ function stopTimer() {
 // ── Render Exercise ──
 function renderExercise() {
   if (!currentLesson || exerciseIndex >= currentLesson.exercises.length) {
-    finishLesson();
+    if (currentLesson) finishLesson();
     return;
   }
 
@@ -987,14 +990,10 @@ function renderMatch(exercise, container) {
     + '<div class="placement-q">Match the pairs</div>'
     + '<div class="match-cols">'
     +   '<div class="match-col" id="mL">'
-    +     leftItems.map((item) =>
-    +       '<button class="match-btn" data-i="' + item.idx + '">' + item.text + '</button>'
-    +     ).join("")
+    +     leftItems.map((item) => '<button class="match-btn" data-i="' + item.idx + '">' + item.text + '</button>').join("")
     +   '</div>'
     +   '<div class="match-col" id="mR">'
-    +     rightItems.map((item) =>
-    +       '<button class="match-btn" data-i="' + item.idx + '">' + item.text + '</button>'
-    +     ).join("")
+    +     rightItems.map((item) => '<button class="match-btn" data-i="' + item.idx + '">' + item.text + '</button>').join("")
     +   '</div>'
     + '</div>';
 
@@ -1192,7 +1191,10 @@ function checkExercise(exercise) {
       if (existing) {
         existing.mastery = Math.min(3, (existing.mastery || 0) + 1);
       } else {
-        S.vocab.push({ word, mastery: 1, learned: Date.now(), unit: currentLesson.unit });
+        S.vocab.push({
+          word, sw: SWAHILI[word.toLowerCase()] || "",
+          mastery: 1, learned: Date.now(), unit: currentLesson.unit
+        });
       }
       S.stats.wordsLearned = S.vocab.length;
     }
@@ -1229,6 +1231,7 @@ function checkExercise(exercise) {
 
   saveState();
   setTimeout(() => {
+    if (!currentLesson) return;
     exerciseIndex++;
     renderExercise();
   }, 1300);
@@ -1272,7 +1275,7 @@ function startTimer() {
       if (!loseHeart()) {
         closeLesson();
       } else {
-        setTimeout(() => { exerciseIndex++; renderExercise(); }, 1000);
+        setTimeout(() => { if (!currentLesson) return; exerciseIndex++; renderExercise(); }, 1000);
       }
     }
   }, 1000);
@@ -1482,8 +1485,21 @@ function renderSettings() {
   });
   document.getElementById("sReset").addEventListener("click", () => {
     if (confirm("Delete ALL progress?")) {
+      if (S.user) {
+        const users = getUsers();
+        const fresh = freshState();
+        users[S.user.name] = {
+          name: S.user.name, role: S.user.role,
+          progress: fresh.progress, stats: fresh.stats,
+          streak: fresh.streak, stars: fresh.stars, xp: fresh.xp, xpLevel: fresh.xpLevel,
+          hearts: fresh.hearts, heartsRegen: fresh.heartsRegen,
+          vocab: fresh.vocab, badges: fresh.badges, dailyActivity: fresh.dailyActivity,
+          streakFreeze: fresh.streakFreeze, daily: fresh.daily,
+          weakCategories: fresh.weakCategories, wrongWords: fresh.wrongWords, placed: fresh.placed
+        };
+        saveUsers(users);
+      }
       S = freshState();
-      saveState();
       showPage("home");
       toast("Reset!", "info");
     }
@@ -1728,9 +1744,12 @@ async function autoFetchWords() {
   const words = await fetchOnlineWords(10);
   if (words.length > 0) {
     const existing = S.vocab.filter((v) => v.online);
-    const newWords = words.filter((w) => !existing.find((e) => e.en === w.en));
+    const newWords = words.filter((w) => !existing.find((e) => e.word === w.en));
     if (newWords.length > 0) {
-      S.vocab.push(...newWords);
+      S.vocab.push(...newWords.map((w) => ({
+        word: w.en, sw: w.sw, mastery: 0, learned: Date.now(),
+        unit: "Online", icon: w.icon, online: true
+      })));
       saveState();
       toast("📥 " + newWords.length + " new words fetched!", "info");
     }
@@ -1776,6 +1795,7 @@ function scheduleDailyReminder() {
 // AUTH
 // ══════════════════════════════════════
 function login(name, role) {
+  initAudio();
   const users = getUsers();
 
   if (users[name]) {
@@ -1853,29 +1873,33 @@ function init() {
   // Migrate old data
   const oldVersion = localStorage.getItem(K.V) || "1.0.0";
   if (oldVersion !== VER) {
-    const users = getUsers();
-    Object.values(users).forEach((u) => {
-      if (u.weakCategories === undefined) u.weakCategories = {};
-      if (u.wrongWords === undefined) u.wrongWords = [];
-      if (u.placed === undefined) u.placed = false;
-      if (u.daily === undefined) u.daily = {};
-    });
-    saveUsers(users);
-    localStorage.setItem(K.V, VER);
+    try {
+      const users = getUsers();
+      Object.values(users).forEach((u) => {
+        if (u.weakCategories === undefined) u.weakCategories = {};
+        if (u.wrongWords === undefined) u.wrongWords = [];
+        if (u.placed === undefined) u.placed = false;
+        if (u.daily === undefined) u.daily = {};
+        if (Array.isArray(u.vocab)) {
+          u.vocab = u.vocab.map((v) => {
+            if (v && !v.word && v.en) {
+              return { word: v.en, sw: v.sw || SWAHILI[v.en.toLowerCase()] || "",
+                mastery: v.mastery || 0, learned: v.learned || Date.now(),
+                unit: v.unit || "Online", icon: v.icon, online: v.online || false };
+            }
+            return v;
+          });
+        }
+      });
+      saveUsers(users);
+      localStorage.setItem(K.V, VER);
+    } catch (_) { localStorage.setItem(K.V, VER); }
   }
-
-  // Force reload if version changed
-  const prevVer = sessionStorage.getItem("ss_ver");
-  if (prevVer && prevVer !== VER) {
-    sessionStorage.removeItem("ss_ver");
-    location.reload();
-    return;
-  }
-  sessionStorage.setItem("ss_ver", VER);
 
   // Login form
   document.getElementById("loginForm").addEventListener("submit", (e) => {
     e.preventDefault();
+    initAudio();
     const name = document.getElementById("loginName").value.trim();
     const role = document.getElementById("loginRole").value;
     if (name.length < 2) return;
@@ -1901,6 +1925,11 @@ function init() {
   }
 
   renderSavedUsers();
+
+  // Register service worker
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./sw.js").catch(function() {});
+  }
 }
 
 document.addEventListener("DOMContentLoaded", init);
