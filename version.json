@@ -1,21 +1,27 @@
 {
-  "version": "3.0.0",
+  "version": "4.0.0",
   "releaseDate": "2026-06-15",
   "updateUrl": "https://galaxymushi-lang.github.io/SafariStars/",
   "changelog": [
-    "Complete visual redesign - modern, vibrant, mobile-first",
-    "Mascot character (🦁) guides users through the app",
-    "Sound effects (correct/wrong/level-up tones)",
-    "Confetti celebration animations on achievements",
-    "Daily goals system with progress tracking",
-    "Enhanced XP/Level/Streak/Badge mechanics",
-    "Real leaderboard with actual user data",
-    "Bottom navigation bar for one-thumb use",
-    "Big round buttons, soft shadows, clean spacing",
-    "Focus mode - one exercise at a time",
-    "Swipeable lesson cards with visual progress",
-    "Shop with Streak Freeze, Hearts Refill, XP Boost",
-    "Simplified auth with mascot welcome screen"
+    "Placement test - diagnoses your level on first use",
+    "Weak areas tracking - focuses on what you get wrong",
+    "Adaptive practice banner - recommends weak categories",
+    "Fixed match exercise - two-column tap pairs",
+    "Fixed tap exercise - build phrases word by word",
+    "Fixed listen exercise - auto-speaks, pick from options",
+    "Fixed fillblank - shows sentence with blank + options",
+    "Duolingo-style 3D buttons (green with shadow depth)",
+    "Sound effects: correct/wrong/level-up/badge/click",
+    "Confetti canvas on celebrations",
+    "Unit labels in lesson map",
+    "Bottom nav with active indicator",
+    "Pill-style top bar (streak/hearts/xp)",
+    "Real leaderboard from actual users",
+    "Profile shows weak areas list",
+    "Dark mode, sound toggle, timer, PIN, shuffle",
+    "Auto-update from GitHub Pages",
+    "Data export/import",
+    "Streak freeze, hearts refill, XP boost shop"
   ],
   "files": [
     "index.html",
@@ -23,8 +29,6 @@
     "lessons.js",
     "app.js",
     "manifest.json",
-    "sw.js",
-    "icons/icon-192.svg",
-    "icons/icon-512.svg"
+    "sw.js"
   ]
 }

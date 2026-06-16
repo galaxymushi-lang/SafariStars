@@ -13,65 +13,92 @@
 </head>
 <body>
 
-<!-- ═══ AUTH SCREEN ═══ -->
+<!-- ════ AUTH SCREEN ════ -->
 <section class="auth-screen" id="authScreen">
   <div class="auth-card">
-    <div class="auth-mascot" aria-hidden="true">
-      <span class="mascot-bounce">🦁</span>
-      <div class="mascot-speech">Karibu! 👋<br/><small>Who is learning today?</small></div>
-    </div>
+    <div class="auth-mascot"><span class="mascot-bounce">🦁</span></div>
+    <div class="mascot-speech" id="authSpeech">Karibu! Who is learning today?</div>
     <form class="auth-form" id="loginForm">
-      <input id="loginName" type="text" placeholder="Your name / Jina lako" required minlength="2" autocomplete="name" />
+      <input id="loginName" type="text" placeholder="Your name" required minlength="2" autocomplete="name" />
       <select id="loginRole">
         <option value="child">Child / Mtoto</option>
         <option value="parent">Parent / Mzazi</option>
         <option value="teacher">Teacher / Mwalimu</option>
       </select>
-      <button class="btn-primary btn-large" type="submit">🚀 Start Learning</button>
+      <button class="btn-primary btn-large" type="submit">🚀 Start</button>
     </form>
     <div class="saved-users" id="savedUsers"></div>
     <div class="auth-credit">Developed by <strong>E.J. MUSHI</strong></div>
   </div>
 </section>
 
-<!-- ═══ APP SHELL ═══ -->
-<div class="app-shell" id="appShell">
+<!-- ════ PLACEMENT TEST ════ -->
+<dialog class="dialog-lg" id="placementDialog">
+  <div class="dialog-header">
+    <span class="placement-progress" id="placementProgress">1 / 15</span>
+    <button class="btn-close" id="placementClose">✕</button>
+  </div>
+  <div class="placement-bar"><div class="placement-bar-fill" id="placementBarFill"></div></div>
+  <div class="placement-body" id="placementBody"></div>
+  <div class="placement-bottom">
+    <div class="lesson-feedback" id="placementFeedback"></div>
+    <button class="btn-primary btn-large btn-full" id="placementCheck" style="display:none">Check</button>
+  </div>
+</dialog>
 
-  <!-- Top Bar -->
+<!-- ════ PLACEMENT RESULT ════ -->
+<dialog class="dialog-lg" id="resultDialog">
+  <div class="result-card" id="resultCard">
+    <div class="result-emoji" id="resultEmoji">🎉</div>
+    <h2 id="resultTitle">Great job!</h2>
+    <p id="resultDesc"></p>
+    <div class="result-level" id="resultLevel"></div>
+    <div class="result-weak" id="resultWeak"></div>
+    <button class="btn-primary btn-large btn-full" id="resultContinue">🚀 Start Learning</button>
+  </div>
+  <canvas class="confetti-canvas" id="confettiCanvas"></canvas>
+</dialog>
+
+<!-- ════ APP SHELL ════ -->
+<div class="app-shell" id="appShell">
   <header class="top-bar">
     <div class="top-mascot" id="mascotMini">🦁</div>
     <div class="top-info">
-      <span class="top-streak" id="streakDisplay">🔥 0</span>
-      <span class="top-hearts" id="heartsDisplay">❤️ 5</span>
-      <span class="top-xp" id="xpDisplay">✨ 0 XP</span>
+      <span class="top-pill streak" id="streakDisplay">🔥 0</span>
+      <span class="top-pill hearts" id="heartsDisplay">❤️ 5</span>
+      <span class="top-pill xp" id="xpDisplay">✨ 0</span>
     </div>
-    <button class="top-settings" id="settingsBtn" aria-label="Settings">⚙️</button>
+    <button class="btn-round" id="settingsBtn">⚙️</button>
   </header>
 
-  <!-- Main Content -->
   <main class="main-content" id="mainContent">
-
-    <!-- Home / Lessons -->
+    <!-- HOME -->
     <section class="page active" id="pageHome">
-      <div class="greeting" id="greeting">
+      <div class="greeting-card">
         <span class="greet-mascot">🦁</span>
-        <div>
+        <div class="greet-text">
           <p class="greet-line" id="greetLine">Ready to learn?</p>
           <p class="greet-sub" id="greetSub">Pick a lesson below</p>
         </div>
       </div>
-      <div class="progress-strip">
-        <div class="progress-strip-inner">
-          <span>Level <strong id="levelDisplay">1</strong></span>
-          <div class="xp-bar-bg"><div class="xp-bar-fill" id="xpBarFill" style="width:0%"></div></div>
-          <span id="xpProgressText">0 / 100 XP</span>
+      <div class="level-bar">
+        <span class="level-label">Lv.<strong id="levelDisplay">1</strong></span>
+        <div class="xp-bar-bg"><div class="xp-bar-fill" id="xpBarFill"></div></div>
+        <span class="xp-text" id="xpProgressText">0 / 100</span>
+        <button class="btn-round btn-sm" id="dailyBtn">🎯</button>
+      </div>
+      <div class="practice-banner" id="practiceBanner" style="display:none">
+        <span>💡</span>
+        <div class="practice-info">
+          <strong>Practice Weak Areas</strong>
+          <small id="practiceDesc">Review words you missed</small>
         </div>
-        <button class="btn-icon" id="dailyBtn" aria-label="Daily Goals">🎯</button>
+        <button class="btn-small" id="practiceBtn">Start</button>
       </div>
       <div class="lesson-map" id="lessonMap"></div>
     </section>
 
-    <!-- Profile -->
+    <!-- PROFILE -->
     <section class="page" id="pageProfile">
       <div class="profile-header">
         <span class="profile-avatar" id="profileAvatar">🦁</span>
@@ -79,7 +106,7 @@
         <span class="profile-role" id="profileRole">Child</span>
       </div>
       <div class="stats-grid">
-        <div class="stat-card"><span class="stat-icon">🔥</span><span class="stat-val" id="statStreak">0</span><span class="stat-lbl">Day Streak</span></div>
+        <div class="stat-card"><span class="stat-icon">🔥</span><span class="stat-val" id="statStreak">0</span><span class="stat-lbl">Streak</span></div>
         <div class="stat-card"><span class="stat-icon">⭐</span><span class="stat-val" id="statStars">0</span><span class="stat-lbl">Stars</span></div>
         <div class="stat-card"><span class="stat-icon">✨</span><span class="stat-val" id="statXP">0</span><span class="stat-lbl">XP</span></div>
         <div class="stat-card"><span class="stat-icon">📚</span><span class="stat-val" id="statLessons">0</span><span class="stat-lbl">Lessons</span></div>
@@ -90,17 +117,21 @@
         <h3>🏅 Badges</h3>
         <div class="badge-grid" id="badgeGrid"></div>
       </div>
+      <div class="weakness-section">
+        <h3>📊 Weak Areas</h3>
+        <div id="weaknessList"></div>
+      </div>
       <button class="btn-secondary btn-full" id="logoutBtn">🚪 Log Out</button>
     </section>
 
-    <!-- Shop -->
+    <!-- SHOP -->
     <section class="page" id="pageShop">
       <h2 class="page-title">🛒 Shop</h2>
       <div class="shop-coins">⭐ <span id="shopStars">0</span> stars</div>
       <div class="shop-grid" id="shopGrid"></div>
     </section>
 
-    <!-- Leaderboard -->
+    <!-- LEADERBOARD -->
     <section class="page" id="pageLeaderboard">
       <h2 class="page-title">🏆 Leaderboard</h2>
       <p class="page-sub">Top learners this week</p>
@@ -108,7 +139,6 @@
     </section>
   </main>
 
-  <!-- Bottom Navigation -->
   <nav class="bottom-nav">
     <button class="nav-btn active" data-page="pageHome">🏠<span>Home</span></button>
     <button class="nav-btn" data-page="pageProfile">👤<span>Profile</span></button>
@@ -117,75 +147,61 @@
   </nav>
 </div>
 
-<!-- ═══ LESSON DIALOG ═══ -->
-<dialog class="lesson-dialog" id="lessonDialog">
+<!-- ════ LESSON DIALOG ════ -->
+<dialog class="dialog-lg lesson-dialog" id="lessonDialog">
   <div class="lesson-top">
-    <span class="lesson-progress" id="lessonProgress">1/5</span>
-    <span class="lesson-hearts" id="lessonHearts">❤️❤️❤️❤️❤️</span>
+    <span class="lesson-prog" id="lessonProgress">1/5</span>
+    <div class="lesson-hearts" id="lessonHearts">❤️❤️❤️❤️❤️</div>
     <span class="lesson-timer" id="lessonTimer"></span>
-    <button class="btn-close" id="closeLesson" aria-label="Close">✕</button>
+    <button class="btn-close" id="closeLesson">✕</button>
   </div>
   <div class="lesson-body" id="exerciseArea"></div>
   <div class="lesson-bottom">
     <div class="lesson-feedback" id="feedbackBox"></div>
     <button class="btn-primary btn-large btn-full" id="checkButton" style="display:none">Check</button>
-    <button class="btn-secondary btn-full" id="skipButton" style="display:none">Skip ➜</button>
+    <button class="btn-skip" id="skipButton" style="display:none">Skip ➜</button>
   </div>
 </dialog>
 
-<!-- ═══ CELEBRATION ═══ -->
-<dialog class="celeb-dialog" id="celebDialog">
-  <div class="celeb-content" id="celebContent">
+<!-- ════ CELEBRATION ════ -->
+<dialog class="dialog-lg celeb-dialog" id="celebDialog">
+  <canvas class="confetti-canvas" id="celebConfetti"></canvas>
+  <div class="celeb-content">
     <div class="celeb-emoji" id="celebEmoji">🎉</div>
     <h2 class="celeb-title" id="celebTitle">Awesome!</h2>
-    <p class="celeb-desc" id="celebDesc">You earned 10 XP</p>
+    <p class="celeb-desc" id="celebDesc"></p>
     <div class="celeb-earned" id="celebEarned"></div>
     <button class="btn-primary btn-large" id="celebContinue">Continue ➜</button>
   </div>
-  <canvas class="confetti-canvas" id="confettiCanvas"></canvas>
 </dialog>
 
-<!-- ═══ DAILY GOALS ═══ -->
+<!-- ════ DAILY GOALS ════ -->
 <dialog class="dialog-sm" id="dailyDialog">
-  <div class="dialog-header">
-    <h2>🎯 Daily Goals</h2>
-    <button class="btn-close" id="dailyClose">✕</button>
-  </div>
+  <div class="dialog-header"><h2>🎯 Daily Goals</h2><button class="btn-close" id="dailyClose">✕</button></div>
   <div class="dialog-body" id="dailyBody"></div>
 </dialog>
 
-<!-- ═══ ACHIEVEMENTS ═══ -->
-<dialog class="dialog-sm" id="achieveDialog">
-  <div class="dialog-header">
-    <h2>🏅 Achievements</h2>
-    <button class="btn-close" id="achieveClose">✕</button>
-  </div>
-  <div class="dialog-body">
-    <div class="badge-grid" id="achieveBadgeGrid"></div>
+<!-- ════ SETTINGS ════ -->
+<dialog class="dialog-sm" id="settingsDialog">
+  <div class="dialog-header"><h2>⚙️ Settings</h2><button class="btn-close" id="settingsClose">✕</button></div>
+  <div class="dialog-body settings-body">
+    <label class="set-row"><span>🌙 Dark Mode</span><input type="checkbox" id="darkModeToggle" /></label>
+    <label class="set-row"><span>🔊 Sound</span><input type="checkbox" id="soundToggle" checked /></label>
+    <label class="set-row"><span>🔔 Reminder</span><input type="checkbox" id="notifToggle" /></label>
+    <label class="set-row"><span>🔀 Shuffle</span><input type="checkbox" id="shuffleToggle" /></label>
+    <label class="set-row"><span>⏱ Timer</span>
+      <select id="timerSetting"><option value="0">Off</option><option value="15">15s</option><option value="30">30s</option><option value="60">60s</option></select>
+    </label>
+    <label class="set-row"><span>🔒 PIN</span><button class="btn-small" id="pinToggle">Set</button></label>
+    <hr class="set-divider" />
+    <button class="btn-secondary btn-full" id="resetBtn">🗑 Reset All</button>
+    <button class="btn-secondary btn-full" id="exportBtn">📤 Export</button>
+    <p class="version-tag">v<span id="appVersion">4.0.0</span></p>
   </div>
 </dialog>
 
-<!-- ═══ SETTINGS ═══ -->
-<dialog class="dialog-sm" id="settingsDialog">
-  <div class="dialog-header">
-    <h2>⚙️ Settings</h2>
-    <button class="btn-close" id="settingsClose">✕</button>
-  </div>
-  <div class="dialog-body settings-body">
-    <label class="setting-row"><span>🌙 Dark Mode</span><input type="checkbox" id="darkModeToggle" /></label>
-    <label class="setting-row"><span>🔊 Sound Effects</span><input type="checkbox" id="soundToggle" checked /></label>
-    <label class="setting-row"><span>🔔 Daily Reminder</span><input type="checkbox" id="notifToggle" /></label>
-    <label class="setting-row"><span>🔀 Shuffle Exercises</span><input type="checkbox" id="shuffleToggle" /></label>
-    <label class="setting-row"><span>⏱ Timer</span>
-      <select id="timerSetting"><option value="0">Off</option><option value="15">15s</option><option value="30">30s</option><option value="60">60s</option></select>
-    </label>
-    <label class="setting-row"><span>🔒 PIN Lock</span><button class="btn-small" id="pinToggle">Set PIN</button></label>
-    <hr class="setting-divider" />
-    <button class="btn-secondary btn-full" id="resetBtn">🗑 Reset Progress</button>
-    <button class="btn-secondary btn-full" id="exportBtn">📤 Export Data</button>
-    <p class="version-tag">v<span id="appVersion">2.1.0</span></p>
-  </div>
-</dialog>
+<!-- ════ TOAST ════ -->
+<div class="toast-wrap" id="toastWrap"></div>
 
 <script src="lessons.js"></script>
 <script src="app.js"></script>
