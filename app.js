@@ -468,43 +468,54 @@ function checkPlaceQ() {
 }
 
 function finishPlacement() {
-  S.placed = true; save();
-  D.placementDialog.close();
+  S.placed = true;
   const pct = Math.round((placeScore / placeQs.length) * 100);
-  let emoji, title, desc, level;
+  let emoji, title, level;
   if (pct >= 80) { emoji = "🏆"; title = "Excellent!"; level = "Advanced Start — Unit 4+"; }
   else if (pct >= 60) { emoji = "🌟"; title = "Good Job!"; level = "Intermediate Start — Unit 3"; }
   else if (pct >= 40) { emoji = "💪"; title = "Nice Try!"; level = "Beginner+ Start — Unit 2"; }
   else { emoji = "📚"; title = "Let's Learn!"; level = "Beginner Start — Unit 1"; }
 
-  // Build weak areas HTML
+  // Weak areas
   const wc = S.weakCategories || {};
   const weakEntries = Object.entries(wc).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
   let weakHTML = "";
   if (weakEntries.length > 0) {
-    weakHTML = "<h4>Areas to focus on:</h4><ul>" + weakEntries.map(([u]) =>
-      '<li><span class="rw-icon">⚠️</span>' + u.replace(/Unit \d+ - /, "") + '</li>'
+    weakHTML = "<h4>Focus on:</h4><ul>" + weakEntries.map(([u]) =>
+      '<li>⚠️ ' + u.replace(/Unit \d+ - /, "") + '</li>'
     ).join("") + "</ul>";
   } else {
-    weakHTML = "<p style='color:var(--green);font-weight:600'>🎉 No weak areas detected!</p>";
+    weakHTML = "<p style='color:var(--green);font-weight:600'>🎉 Great — no weak areas!</p>";
   }
 
-  // Unlock lessons based on placement (don't mark as completed - just unlock)
+  // Unlock lessons based on placement score
   function unlockUpTo(lessonId) {
     const idx = LESSONS.findIndex(l => l.id === lessonId);
     if (idx < 0) return;
-    // Mark this lesson and all before it as unlocked (not completed)
     for (let i = 0; i <= idx; i++) {
       const lid = LESSONS[i].id;
-      if (!S.progress[lid]) S.progress[lid] = { completed: false, bestScore: 0, unlocked: true };
+      S.progress[lid] = S.progress[lid] || {};
+      S.progress[lid].unlocked = true;
+      if (!S.progress[lid].completed) S.progress[lid].completed = false;
     }
   }
   if (pct >= 80) unlockUpTo("phrases");
   else if (pct >= 60) unlockUpTo("colors");
   else if (pct >= 40) unlockUpTo("numbers");
+  else { unlockUpTo("greetings"); }
   save();
 
-  setTimeout(() => showCeleb("placement", { emoji, title, desc: placeScore + "/" + placeQs.length + " correct (" + pct + "%)", level, weakHTML }), 300);
+  // Close placement dialog first
+  try { D.placementDialog.close(); } catch {}
+
+  // Show result after a short delay
+  setTimeout(() => {
+    showCeleb("placement", {
+      emoji, title,
+      desc: placeScore + "/" + placeQs.length + " correct (" + pct + "%)",
+      level, weakHTML
+    });
+  }, 400);
 }
 
 // ═══════════════════════════════════
@@ -968,20 +979,16 @@ function init() {
   D.closeLesson.addEventListener("click", closeLesson);
 
   // Celebration
-  D.celebContinue.addEventListener("click", () => D.celebDialog.close());
-  D.resultContinue.addEventListener("click", closeResult);
-  // Also bind via setTimeout in case dialog isn't ready yet
-  setTimeout(() => {
-    const btn = document.getElementById("resultContinue");
-    if (btn) btn.addEventListener("click", closeResult);
-  }, 100);
+  D.celebContinue.addEventListener("click", () => { D.celebDialog.close(); });
 
-function closeResult() {
-  D.resultDialog.close();
-  renderAll();
-}
-// Expose globally for onclick fallback
-window.closeResult = closeResult;
+  // Result Continue button
+  if (D.resultContinue) {
+    D.resultContinue.addEventListener("click", function() {
+      try { D.resultDialog.close(); } catch {}
+      renderAll();
+      goPage("pageHome");
+    });
+  }
 
   // Practice
   D.practiceBtn.addEventListener("click", () => {
