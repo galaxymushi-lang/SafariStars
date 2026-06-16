@@ -9,21 +9,15 @@ const $$ = s => document.querySelectorAll(s);
 const D = {};
 function grab() {
   ["authScreen","appShell","loginForm","loginName","loginRole","savedUsers",
-   "lessonMap","lessonDialog","closeLesson","exerciseArea","feedbackBox",
-   "checkButton","skipButton","lessonProgress","lessonHearts","lessonTimer",
-   "celebDialog","celebIcon","celebTitle","celebDesc","celebEarned","celebContinue","celebConfetti",
+   "lessonMap","mainDialog","closeDlg","dlgBody","dlgProgress","dlgProgBar","dlgProgFill",
+   "feedbackBox","checkButton","skipButton","lessonHearts","lessonTimer",
    "streakDisplay","heartsDisplay","xpDisplay","levelDisplay","xpBarFill","xpProgressText",
    "greetLine","greetSub","profileName","profileRole","logoutBtn",
    "statStreak","statStars","statXP","statLessons","statCorrect","statWords",
    "badgeGrid","weaknessList","shopGrid","shopStars","leagueList",
-   "settingsBtn","settingsDialog","settingsClose","darkModeToggle","soundToggle",
-   "notifToggle","shuffleToggle","timerSetting","pinToggle","resetBtn","exportBtn","appVersion",
-   "dailyBtn","dailyDialog","dailyClose","dailyBody",
-   "practiceBanner","practiceDesc","practiceBtn",
-   "placementDialog","placementProgress","placementBarFill","placementBody",
-   "placementCheck","placementFeedback","placementClose",
-   "resultDialog","resultIcon","resultTitle","resultDesc","resultLevel","resultWeak","resultContinue",
-   "toastWrap"
+   "settingsBtn","darkModeToggle","soundToggle",
+   "notifToggle","shuffleToggle","timerSetting","pinToggle","resetBtn","exportBtn",
+   "dailyBtn","practiceBanner","practiceDesc","practiceBtn","toastWrap"
   ].forEach(id => D[id] = document.getElementById(id));
 }
 
@@ -68,6 +62,16 @@ const DAILY = [
   {id:"xp",icon:"✨",label:"Earn 30 XP",need:30},
   {id:"perfect",icon:"💎",label:"Get a perfect score",need:1}
 ];
+
+// ── Dialog helpers ──
+let _dlgMode = "";
+function openDlg(mode) { _dlgMode = mode; D.mainDialog.showModal(); }
+function closeDlg() {
+  stopTimer(); _dlgMode = "";
+  D.mainDialog.close();
+  D.mainDialog.removeAttribute("open");
+  document.body.style.overflow = "";
+}
 
 // ── State ──
 function fresh() {
@@ -145,23 +149,20 @@ function refreshXP() {
   if (D.xpBarFill) D.xpBarFill.style.width = pct + "%";
   if (D.xpProgressText) D.xpProgressText.textContent = S.xp + " / " + need;
   if (D.levelDisplay) D.levelDisplay.textContent = S.xpLevel;
-  if (D.xpDisplay) D.xpDisplay.textContent = "✨ " + S.stats.xp;
+  if (D.xpDisplay) D.xpDisplay.textContent = S.stats.xp;
   if (D.statXP) D.statXP.textContent = S.stats.xp;
 }
 function floatXP(amt) {
-  if (!D.exerciseArea) return;
   const el = document.createElement("div");
   el.className = "xp-float"; el.textContent = "+" + amt + " XP";
-  const r = D.exerciseArea.getBoundingClientRect();
-  el.style.left = (r.left + r.width / 2 - 30) + "px";
-  el.style.top = (r.top + 40) + "px";
+  el.style.left = "50%"; el.style.top = "40px"; el.style.transform = "translateX(-50%)";
   document.body.appendChild(el);
   setTimeout(() => el.remove(), 900);
 }
 
 // ── Hearts ──
 function refreshHearts() {
-  if (D.heartsDisplay) D.heartsDisplay.textContent = "❤️".repeat(S.hearts) + "🖤".repeat(Math.max(0, 5 - S.hearts));
+  if (D.heartsDisplay) D.heartsDisplay.textContent = S.hearts;
   if (D.lessonHearts) D.lessonHearts.textContent = "❤️".repeat(S.hearts) + "🖤".repeat(Math.max(0, 5 - S.hearts));
 }
 function loseHeart() {
@@ -178,7 +179,7 @@ function regenHearts() {
 
 // ── Streak ──
 function refreshStreak() {
-  if (D.streakDisplay) D.streakDisplay.textContent = "🔥 " + S.streak;
+  if (D.streakDisplay) D.streakDisplay.textContent = S.streak;
   if (D.statStreak) D.statStreak.textContent = S.streak;
 }
 function markDay() {
@@ -204,27 +205,20 @@ function checkBadges() {
   const owned = S.badges || [];
   const has = id => owned.some(b => b.id === id);
   const earn = [];
-  // Word badges
   if (!has("first_word") && S.vocab.length >= 1) earn.push("first_word");
   if (!has("words_10") && S.vocab.length >= 10) earn.push("words_10");
   if (!has("words_25") && S.vocab.length >= 25) earn.push("words_25");
   if (!has("words_50") && S.vocab.length >= 50) earn.push("words_50");
-  // Lesson badges
   if (!has("five_lessons") && S.stats.lessonsDone >= 5) earn.push("five_lessons");
   if (!has("ten_lessons") && S.stats.lessonsDone >= 10) earn.push("ten_lessons");
   if (!has("twenty_lessons") && S.stats.lessonsDone >= 20) earn.push("twenty_lessons");
-  // Streak badges
   if (!has("streak_3") && S.streak >= 3) earn.push("streak_3");
   if (!has("streak_7") && S.streak >= 7) earn.push("streak_7");
   if (!has("streak_30") && S.streak >= 30) earn.push("streak_30");
-  // XP badges
   if (!has("xp_100") && S.stats.xp >= 100) earn.push("xp_100");
   if (!has("xp_500") && S.stats.xp >= 500) earn.push("xp_500");
   if (!has("xp_1000") && S.stats.xp >= 1000) earn.push("xp_1000");
-  // Perfect badges
-  const perfectCount = (S.badges || []).filter(b => b.id === "perfect_3" || b.id === "perfect_10").length;
   if (!has("perfect_3") && S.stats.lessonsDone >= 3 && (S.stats.correct / Math.max(1, S.stats.correct + S.stats.wrong)) >= 0.95) earn.push("perfect_3");
-  // Time-based badges
   const hour = new Date().getHours();
   if (!has("night_owl") && hour >= 21 && S.stats.lessonsDone > 0) earn.push("night_owl");
   if (!has("early_bird") && hour < 8 && S.stats.lessonsDone > 0) earn.push("early_bird");
@@ -258,18 +252,6 @@ function trackDaily(id, n = 1) {
   S.daily[t][id] = (S.daily[t][id] || 0) + n;
   save();
 }
-function renderDaily() {
-  if (!D.dailyBody) return;
-  const t = dateKey(); const g = (S.daily || {})[t] || {};
-  D.dailyBody.innerHTML = DAILY.map(d => {
-    const cur = g[d.id] || 0; const ok = cur >= d.need;
-    return `<div class="daily-goal ${ok ? 'done' : ''}" style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg);border-radius:var(--R);margin-bottom:8px">
-      <span style="font-size:1.5rem">${d.icon}</span>
-      <div style="flex:1"><strong style="font-size:.85rem">${d.label}</strong><br><small style="font-size:.7rem;color:var(--t2)">${cur} / ${d.need}</small></div>
-      <span style="font-size:1.2rem">${ok ? '✅' : ''}</span>
-    </div>`;
-  }).join("");
-}
 
 // ── Weak Areas ──
 function trackWeak(unit, wrong) {
@@ -282,14 +264,13 @@ function renderWeak() {
   const wc = S.weakCategories || {};
   const entries = Object.entries(wc).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
   if (entries.length === 0) {
-    D.weaknessList.innerHTML = '<div class="no-weak">🎉 No weak areas yet! Keep learning.</div>';
+    D.weaknessList.innerHTML = '<div class="no-weak">No weak areas yet! Keep learning.</div>';
     return;
   }
   D.weaknessList.innerHTML = entries.map(([unit, count]) => {
     const short = unit.replace(/Unit \d+ - /, "");
     return `<div class="weak-item"><div class="weak-dot"></div><div class="weak-info"><strong>${short}</strong><small>${count} wrong answers</small></div></div>`;
   }).join("");
-  // Practice banner
   if (D.practiceBanner) {
     const top = entries[0];
     if (top) {
@@ -307,44 +288,18 @@ function toast(msg, type = "info") {
   setTimeout(() => { t.style.opacity = "0"; t.style.transition = "opacity .3s"; setTimeout(() => t.remove(), 300); }, 2200);
 }
 
-// ── Celebration ──
-function showCeleb(type, data) {
-  if (type === "level") {
-    D.celebTitle.textContent = "Level " + data + "!";
-    D.celebDesc.textContent = "You're getting better every day!";
-    D.celebEarned.innerHTML = '<span class="xp-tag">✨ +50 XP bonus</span>';
-    addXP(50); launchConfetti(D.celebConfetti);
-  } else if (type === "badge") {
-    D.celebTitle.textContent = "Badge Earned!";
-    D.celebDesc.textContent = data.name + " — " + data.desc;
-    D.celebEarned.innerHTML = '<span class="badge-tag">' + data.icon + ' ' + data.name + '</span>';
-    launchConfetti(D.celebConfetti);
-  } else if (type === "lesson") {
-    const p = data || {};
-    D.celebTitle.textContent = p.perfect ? "Perfect Score!" : "Lesson Complete!";
-    D.celebDesc.textContent = "You earned " + p.xp + " XP!";
-    let tags = '<span class="xp-tag">✨ ' + p.xp + ' XP</span>';
-    if (p.perfect) tags += '<span class="badge-tag">💎 Perfect</span>';
-    tags += '<span class="star-tag">⭐ +' + (p.stars || 5) + '</span>';
-    D.celebEarned.innerHTML = tags;
-    launchConfetti(D.celebConfetti);
-  } else if (type === "placement") {
-    D.resultTitle.textContent = data.title;
-    D.resultDesc.textContent = data.desc;
-    D.resultLevel.textContent = data.level;
-    D.resultWeak.innerHTML = data.weakHTML;
-    D.resultDialog.showModal();
-    launchConfetti(document.getElementById("confettiCanvas"));
-    return;
-  }
-  D.celebDialog.showModal();
-}
-
 // ── Confetti ──
-function launchConfetti(canvas) {
-  if (!canvas) return;
-  canvas.width = canvas.parentElement.clientWidth || 400;
-  canvas.height = canvas.parentElement.clientHeight || 400;
+function launchConfetti(parent) {
+  if (!parent) return;
+  let canvas = parent.querySelector("canvas") || parent;
+  if (canvas.tagName !== "CANVAS") {
+    canvas = document.createElement("canvas");
+    canvas.style.cssText = "position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:10";
+    parent.style.position = "relative";
+    parent.appendChild(canvas);
+  }
+  canvas.width = parent.clientWidth || 400;
+  canvas.height = parent.clientHeight || 400;
   const c = canvas.getContext("2d");
   const colors = ["#FF6B35","#FFB800","#58CC02","#1CB0F6","#A560E8","#FF6B9D","#FF4245"];
   const ps = [];
@@ -372,6 +327,137 @@ function launchConfetti(canvas) {
   draw();
 }
 
+// ═══════════════════════════════════
+// CELEBRATION (renders into mainDialog)
+// ═══════════════════════════════════
+function showCeleb(type, data) {
+  let html = "";
+  if (type === "level") {
+    addXP(50);
+    html = `<div class="dlg-center" style="text-align:center;padding:30px 20px">
+      <div style="font-size:3rem;margin-bottom:10px">🎉</div>
+      <h2>Level ${data}!</h2>
+      <p class="muted">You're getting better every day!</p>
+      <div class="celeb-tags"><span class="xp-tag">✨ +50 XP bonus</span></div>
+      <button class="btn btn-green btn-block" id="celebOk">Continue</button>
+    </div>`;
+  } else if (type === "badge") {
+    html = `<div class="dlg-center" style="text-align:center;padding:30px 20px">
+      <div style="font-size:3rem;margin-bottom:10px">${data.icon}</div>
+      <h2>Badge Earned!</h2>
+      <p class="muted">${data.name} — ${data.desc}</p>
+      <div class="celeb-tags"><span class="badge-tag">${data.icon} ${data.name}</span></div>
+      <button class="btn btn-green btn-block" id="celebOk">Continue</button>
+    </div>`;
+  } else if (type === "lesson") {
+    const p = data || {};
+    html = `<div class="dlg-center" style="text-align:center;padding:30px 20px">
+      <div style="font-size:3rem;margin-bottom:10px">${p.perfect ? '💎' : '🎉'}</div>
+      <h2>${p.perfect ? "Perfect Score!" : "Lesson Complete!"}</h2>
+      <p class="muted">You earned ${p.xp} XP!</p>
+      <div class="celeb-tags">
+        <span class="xp-tag">✨ ${p.xp} XP</span>
+        ${p.perfect ? '<span class="badge-tag">💎 Perfect</span>' : ''}
+        <span class="star-tag">⭐ +${p.stars || 5}</span>
+      </div>
+      <button class="btn btn-green btn-block" id="celebOk">Continue</button>
+    </div>`;
+  } else if (type === "placement") {
+    const d = data || {};
+    html = `<div class="dlg-center" style="text-align:center;padding:30px 20px">
+      <div style="font-size:3rem;margin-bottom:10px">${d.emoji || '🏆'}</div>
+      <h2>${d.title}</h2>
+      <p class="muted">${d.desc}</p>
+      <div style="margin:12px 0;padding:12px;background:var(--bg);border-radius:var(--R);font-weight:700;color:var(--g)">${d.level}</div>
+      <div style="text-align:left;margin:12px 0;font-size:.85rem">${d.weakHTML || ''}</div>
+      <button class="btn btn-green btn-block" id="celebOk">Start Learning</button>
+    </div>`;
+  }
+
+  D.dlgProgress.textContent = "";
+  D.dlgProgBar.style.display = "none";
+  D.lessonHearts.textContent = "";
+  D.lessonTimer.textContent = "";
+  D.dlgBody.innerHTML = html;
+  document.getElementById("dlgBottom").style.display = "none";
+  openDlg("celeb");
+  setTimeout(() => launchConfetti(D.dlgBody), 100);
+
+  const btn = document.getElementById("celebOk");
+  if (btn) btn.addEventListener("click", () => {
+    closeDlg();
+    document.getElementById("dlgBottom").style.display = "";
+    renderMap(); refreshHearts(); checkBadges(); renderWeak();
+  });
+  D.mainDialog.addEventListener("click", function handler(e) {
+    if (e.target === D.mainDialog) { closeDlg(); document.getElementById("dlgBottom").style.display = ""; renderMap(); refreshHearts(); D.mainDialog.removeEventListener("click", handler); }
+  });
+}
+
+// ── Settings (renders into mainDialog) ──
+function showSettings() {
+  const set = getSet();
+  D.dlgProgress.textContent = "Settings";
+  D.dlgProgBar.style.display = "none";
+  D.lessonHearts.textContent = "";
+  D.lessonTimer.textContent = "";
+  document.getElementById("dlgBottom").style.display = "none";
+  D.dlgBody.innerHTML = `
+    <div style="padding:10px 0">
+      <label class="sw-row"><span>Dark Mode</span><input type="checkbox" id="mDarkMode" ${set.dark ? 'checked' : ''} /></label>
+      <label class="sw-row"><span>Sound</span><input type="checkbox" id="mSound" ${set.sound !== false ? 'checked' : ''} /></label>
+      <label class="sw-row"><span>Reminder</span><input type="checkbox" id="mNotif" ${set.notif ? 'checked' : ''} /></label>
+      <label class="sw-row"><span>Shuffle</span><input type="checkbox" id="mShuffle" ${set.shuffle ? 'checked' : ''} /></label>
+      <label class="sw-row"><span>Timer</span><select id="mTimer"><option value="0" ${set.timer==0?'selected':''}>Off</option><option value="15" ${set.timer==15?'selected':''}>15s</option><option value="30" ${set.timer==30?'selected':''}>30s</option><option value="60" ${set.timer==60?'selected':''}>60s</option></select></label>
+      <label class="sw-row"><span>PIN</span><button class="btn btn-sm btn-outline" id="mPin">${set.pin ? "Remove" : "Set"}</button></label>
+      <hr />
+      <button class="btn btn-outline btn-block" id="mReset">Reset Progress</button>
+      <button class="btn btn-outline btn-block" id="mExport">Export Data</button>
+      <p class="ver">v${VER}</p>
+    </div>`;
+  openDlg("settings");
+
+  const close = () => { closeDlg(); document.getElementById("dlgBottom").style.display = ""; };
+  document.getElementById("mDarkMode").addEventListener("change", function() { const s = getSet(); s.dark = this.checked; saveSet(s); applySet(s); });
+  document.getElementById("mSound").addEventListener("change", function() { const s = getSet(); s.sound = this.checked; saveSet(s); });
+  document.getElementById("mNotif").addEventListener("change", function() {
+    const s = getSet(); s.notif = this.checked; saveSet(s);
+    if (s.notif && typeof Notification !== "undefined") Notification.requestPermission();
+  });
+  document.getElementById("mShuffle").addEventListener("change", function() { const s = getSet(); s.shuffle = this.checked; saveSet(s); });
+  document.getElementById("mTimer").addEventListener("change", function() { const s = getSet(); s.timer = parseInt(this.value); saveSet(s); });
+  document.getElementById("mPin").addEventListener("click", function() {
+    const s = getSet();
+    if (s.pin) { if (confirm("Remove PIN?")) { s.pin = ""; saveSet(s); this.textContent = "Set"; toast("PIN removed", "info"); } }
+    else { const p = prompt("Enter 4-digit PIN:"); if (p && /^\d{4}$/.test(p)) { s.pin = p; saveSet(s); this.textContent = "Remove"; toast("PIN set!", "ok"); } else if (p) toast("Need 4 digits", "err"); }
+  });
+  document.getElementById("mReset").addEventListener("click", () => { if (confirm("Delete ALL progress?")) { S = fresh(); save(); renderAll(); toast("Reset!", "info"); close(); } });
+  document.getElementById("mExport").addEventListener("click", () => { exportData(); close(); });
+
+  D.closeDlg.onclick = close;
+}
+
+// ── Daily Goals (renders into mainDialog) ──
+function showDaily() {
+  const t = dateKey(); const g = (S.daily || {})[t] || {};
+  D.dlgProgress.textContent = "Daily Goals";
+  D.dlgProgBar.style.display = "none";
+  D.lessonHearts.textContent = "";
+  D.lessonTimer.textContent = "";
+  document.getElementById("dlgBottom").style.display = "none";
+  D.dlgBody.innerHTML = DAILY.map(d => {
+    const cur = g[d.id] || 0; const ok = cur >= d.need;
+    return `<div style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg);border-radius:var(--R);margin-bottom:8px">
+      <span style="font-size:1.5rem">${d.icon}</span>
+      <div style="flex:1"><strong style="font-size:.85rem">${d.label}</strong><br><small style="font-size:.7rem;color:var(--t2)">${cur} / ${d.need}</small></div>
+      <span style="font-size:1.2rem">${ok ? '✅' : ''}</span>
+    </div>`;
+  }).join("");
+  openDlg("daily");
+  const close = () => { closeDlg(); document.getElementById("dlgBottom").style.display = ""; };
+  D.closeDlg.onclick = close;
+}
+
 // ── Auth ──
 function login(name, role) {
   const users = getUsers();
@@ -387,12 +473,10 @@ function login(name, role) {
   localStorage.setItem(K.C, JSON.stringify({ name }));
   D.authScreen.style.display = "none"; D.appShell.classList.add("active");
   initDaily(); checkStreak(); regenHearts(); renderAll();
-  // Auto-fetch online words & notifications
   autoFetchWords();
   const set = getSet();
   if (set.notif) requestNotifPermission();
   setTimeout(() => { if (set.notif) scheduleDailyReminder(); }, 2000);
-  // Check placement
   if (!S.placed) { setTimeout(startPlacement, 600); }
 }
 function logout() {
@@ -404,7 +488,6 @@ function logout() {
 function goPage(id) {
   $$(".pg").forEach(p => p.classList.remove("active"));
   const pg = document.getElementById(id); if (pg) pg.classList.add("active");
-  $$(".bnav-btn").forEach(b => b.classList.toggle("active", b.dataset.page === id));
   if (id === "pageHome") renderMap();
   if (id === "pageProfile") renderProfile();
   if (id === "pageShop") renderShop();
@@ -418,12 +501,11 @@ function setGreeting(type) {
 }
 
 // ═══════════════════════════════════
-// PLACEMENT TEST
+// PLACEMENT TEST (renders into mainDialog)
 // ═══════════════════════════════════
 let placeQs = [], placeIdx = 0, placeScore = 0, placeSelected = null, placeAnswered = false;
 
 function buildPlacement() {
-  // Pick one multiple-choice question from each of the first 10 lessons + 5 random
   const qs = [];
   LESSONS.forEach(l => {
     const mc = l.exercises.filter(e => e.type === "multiple");
@@ -432,14 +514,13 @@ function buildPlacement() {
       qs.push({ ...ex, unit: l.unit, lessonTitle: l.title });
     }
   });
-  // Shuffle and take 15
   for (let i = qs.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [qs[i], qs[j]] = [qs[j], qs[i]]; }
   return qs.slice(0, 15);
 }
 
 function startPlacement() {
   placeQs = buildPlacement(); placeIdx = 0; placeScore = 0;
-  D.placementDialog.showModal(); renderPlaceQ();
+  renderPlaceQ();
 }
 
 function renderPlaceQ() {
@@ -447,26 +528,37 @@ function renderPlaceQ() {
   placeSelected = null; placeAnswered = false;
   const q = placeQs[placeIdx];
   const total = placeQs.length;
-  if (D.placementProgress) D.placementProgress.textContent = (placeIdx + 1) + " / " + total;
-  if (D.placementBarFill) D.placementBarFill.style.width = ((placeIdx / total) * 100) + "%";
-  if (D.placementFeedback) { D.placementFeedback.className = "fb"; D.placementFeedback.textContent = ""; }
-  if (D.placementCheck) D.placementCheck.style.display = "none";
+  const pct = Math.round((placeIdx / total) * 100);
 
-  D.placementBody.innerHTML = `
+  D.dlgProgress.textContent = "Placement " + (placeIdx + 1) + " / " + total;
+  D.dlgProgBar.style.display = "block";
+  D.dlgProgFill.style.width = pct + "%";
+  D.lessonHearts.textContent = "";
+  D.lessonTimer.textContent = "";
+  document.getElementById("dlgBottom").style.display = "";
+
+  D.feedbackBox.className = "fb";
+  D.feedbackBox.textContent = "";
+  D.checkButton.style.display = "none";
+  D.skipButton.style.display = "none";
+
+  D.dlgBody.innerHTML = `
     <div class="placement-q">${q.question}</div>
-    <div class="opt-grid">${q.options.map((o, i) => `<button class="opt-btn" data-idx="${i}">${o}</button>`).join("")}</div>
-  `;
-  D.placementBody.querySelectorAll(".opt-btn").forEach(b => {
+    <div class="opt-grid">${q.options.map((o, i) => `<button class="opt-btn" data-idx="${i}">${o}</button>`).join("")}</div>`;
+
+  D.dlgBody.querySelectorAll(".opt-btn").forEach(b => {
     b.addEventListener("click", () => {
       if (placeAnswered) return;
       sndClick();
       placeSelected = parseInt(b.dataset.idx);
-      D.placementBody.querySelectorAll(".opt-btn").forEach(x => x.classList.remove("sel"));
+      D.dlgBody.querySelectorAll(".opt-btn").forEach(x => x.classList.remove("sel"));
       b.classList.add("sel");
-      D.placementCheck.style.display = "block";
+      D.checkButton.style.display = "block";
+      D.checkButton.textContent = "Check";
+      D.checkButton.onclick = checkPlaceQ;
     });
   });
-  D.placementCheck.onclick = checkPlaceQ;
+  openDlg("placement");
 }
 
 function checkPlaceQ() {
@@ -477,18 +569,16 @@ function checkPlaceQ() {
   if (correct) { placeScore++; sndCorrect(); trackWeak(q.unit, false); }
   else { sndWrong(); trackWeak(q.unit, true); }
 
-  // Highlight
-  const btns = D.placementBody.querySelectorAll(".opt-btn");
+  const btns = D.dlgBody.querySelectorAll(".opt-btn");
   btns.forEach((b, i) => {
     b.classList.add("off");
     if (i === q.correct) b.classList.add("correct");
     if (i === placeSelected && !correct) b.classList.add("wrong");
   });
 
-  if (D.placementFeedback) {
-    D.placementFeedback.className = "fb show " + (correct ? "ok" : "fail");
-    D.placementFeedback.textContent = correct ? "✅ Correct!" : "❌ Answer: " + q.options[q.correct];
-  }
+  D.feedbackBox.className = "fb show " + (correct ? "ok" : "fail");
+  D.feedbackBox.textContent = correct ? "✅ Correct!" : "❌ Answer: " + q.options[q.correct];
+  D.checkButton.style.display = "none";
 
   setTimeout(() => { placeIdx++; renderPlaceQ(); }, 1200);
 }
@@ -502,7 +592,6 @@ function finishPlacement() {
   else if (pct >= 40) { emoji = "💪"; title = "Nice Try!"; level = "Beginner+ Start — Unit 2"; }
   else { emoji = "📚"; title = "Let's Learn!"; level = "Beginner Start — Unit 1"; }
 
-  // Weak areas
   const wc = S.weakCategories || {};
   const weakEntries = Object.entries(wc).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
   let weakHTML = "";
@@ -514,7 +603,6 @@ function finishPlacement() {
     weakHTML = "<p style='color:var(--g);font-weight:600'>🎉 Great — no weak areas!</p>";
   }
 
-  // Unlock lessons based on placement score
   function unlockUpTo(lessonId) {
     const idx = LESSONS.findIndex(l => l.id === lessonId);
     if (idx < 0) return;
@@ -531,21 +619,18 @@ function finishPlacement() {
   else { unlockUpTo("greetings"); }
   save();
 
-  // Close placement dialog first
-  try { D.placementDialog.close(); } catch {}
-
-  // Show result after a short delay
+  closeDlg();
   setTimeout(() => {
     showCeleb("placement", {
       emoji, title,
       desc: placeScore + "/" + placeQs.length + " correct (" + pct + "%)",
       level, weakHTML
     });
-  }, 400);
+  }, 300);
 }
 
 // ═══════════════════════════════════
-// LESSONS
+// LESSONS (renders into mainDialog)
 // ═══════════════════════════════════
 let curLesson = null, curIdx = 0, exOrder = [], selOpt = null, matchLeft = null, matchRight = null, tapWords = [], timerInt = null, timerSec = 0, _correct = 0, _total = 0;
 
@@ -589,14 +674,12 @@ function openLesson(id) {
   exOrder = curLesson.exercises.map((_, i) => i);
   if (s.shuffle) for (let i = exOrder.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [exOrder[i], exOrder[j]] = [exOrder[j], exOrder[i]]; }
   curIdx = 0; _correct = 0; _total = 0;
-  D.lessonDialog.showModal();
+  document.getElementById("dlgBottom").style.display = "";
   renderEx();
 }
 function closeLesson() {
-  stopTimer();
-  D.lessonDialog.close();
-  D.lessonDialog.removeAttribute("open");
-  document.body.style.overflow = "";
+  closeDlg();
+  document.getElementById("dlgBottom").style.display = "";
   curLesson = null;
   renderMap(); refreshHearts(); checkBadges(); renderWeak();
 }
@@ -610,12 +693,14 @@ function renderEx() {
   selOpt = null; matchLeft = null; matchRight = null; tapWords = [];
   _total++;
   const total = curLesson.exercises.length;
-  D.lessonProgress.textContent = (curIdx + 1) + " / " + total;
-  refreshHearts();
+  D.dlgProgress.textContent = (curIdx + 1) + " / " + total;
+  D.dlgProgBar.style.display = "none";
+  D.lessonHearts.textContent = "❤️".repeat(S.hearts) + "🖤".repeat(Math.max(0, 5 - S.hearts));
   D.checkButton.style.display = "none";
   D.skipButton.style.display = "block";
   D.feedbackBox.className = "fb";
   startTimer();
+  openDlg("lesson");
 
   switch (ex.type) {
     case "multiple": renderMultiple(ex); break;
@@ -631,27 +716,26 @@ function renderEx() {
 }
 
 function renderMultiple(ex) {
-  D.exerciseArea.innerHTML = `
+  D.dlgBody.innerHTML = `
     <div class="placement-q">${ex.question}</div>
     <div class="opt-grid">${ex.options.map((o, i) => '<button class="opt-btn" data-i="' + i + '">' + o + '</button>').join("")}</div>`;
-  D.exerciseArea.querySelectorAll(".opt-btn").forEach(b => b.addEventListener("click", () => {
+  D.dlgBody.querySelectorAll(".opt-btn").forEach(b => b.addEventListener("click", () => {
     sndClick(); selOpt = parseInt(b.dataset.i);
-    D.exerciseArea.querySelectorAll(".opt-btn").forEach(x => x.classList.remove("sel"));
+    D.dlgBody.querySelectorAll(".opt-btn").forEach(x => x.classList.remove("sel"));
     b.classList.add("sel"); D.checkButton.style.display = "block"; D.skipButton.style.display = "none";
   }));
 }
 
 function renderFillBlank(ex) {
   const parts = ex.sentence.split("___");
-  D.exerciseArea.innerHTML = `
+  D.dlgBody.innerHTML = `
     <div class="placement-q">${parts[0]}<span style="display:inline-block;min-width:80px;border-bottom:3px solid var(--o);margin:0 4px">&nbsp;</span>${parts[1] || ''}</div>
     <div class="opt-grid">${ex.options.map((o, i) => '<button class="opt-btn" data-i="' + i + '">' + o + '</button>').join("")}</div>`;
-  D.exerciseArea.querySelectorAll(".opt-btn").forEach(b => b.addEventListener("click", () => {
+  D.dlgBody.querySelectorAll(".opt-btn").forEach(b => b.addEventListener("click", () => {
     sndClick(); selOpt = parseInt(b.dataset.i);
-    D.exerciseArea.querySelectorAll(".opt-btn").forEach(x => x.classList.remove("sel"));
+    D.dlgBody.querySelectorAll(".opt-btn").forEach(x => x.classList.remove("sel"));
     b.classList.add("sel");
-    // Show selected word in blank
-    const spans = D.exerciseArea.querySelectorAll("span[style]");
+    const spans = D.dlgBody.querySelectorAll("span[style]");
     spans.forEach(s => { if (s.style.borderBottom && selOpt !== null) s.textContent = ex.options[selOpt]; });
     D.checkButton.style.display = "block"; D.skipButton.style.display = "none";
   }));
@@ -661,10 +745,9 @@ function renderMatch(ex) {
   const pairs = ex.pairs;
   const leftItems = pairs.map((p, i) => ({ text: p[0], idx: i }));
   const rightItems = pairs.map((p, i) => ({ text: p[1], idx: i }));
-  // Shuffle right
   for (let i = rightItems.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [rightItems[i], rightItems[j]] = [rightItems[j], rightItems[i]]; }
 
-  D.exerciseArea.innerHTML = `
+  D.dlgBody.innerHTML = `
     <div class="placement-q">Match the pairs</div>
     <div class="match-cols">
       <div class="match-col" id="matchLeft">${leftItems.map(i => '<button class="match-btn" data-i="' + i.idx + '">' + i.text + '</button>').join("")}</div>
@@ -672,23 +755,21 @@ function renderMatch(ex) {
     </div>`;
 
   const matched = new Set();
-  D.exerciseArea.querySelectorAll(".match-btn").forEach(b => {
+  D.dlgBody.querySelectorAll(".match-btn").forEach(b => {
     b.addEventListener("click", () => {
       sndClick(); const idx = parseInt(b.dataset.i);
       const isLeft = b.parentElement.id === "matchLeft";
       if (isLeft) {
-        D.exerciseArea.querySelectorAll("#matchLeft .match-btn").forEach(x => x.classList.remove("sel"));
+        D.dlgBody.querySelectorAll("#matchLeft .match-btn").forEach(x => x.classList.remove("sel"));
         b.classList.add("sel"); matchLeft = idx;
       } else {
-        D.exerciseArea.querySelectorAll("#matchRight .match-btn").forEach(x => x.classList.remove("sel"));
+        D.dlgBody.querySelectorAll("#matchRight .match-btn").forEach(x => x.classList.remove("sel"));
         b.classList.add("sel"); matchRight = idx;
       }
-      // Check if both selected
       if (matchLeft !== null && matchRight !== null) {
         if (matchLeft === matchRight) {
-          // Correct match
-          const lb = D.exerciseArea.querySelector('#matchLeft .match-btn[data-i="' + matchLeft + '"]');
-          const rb = D.exerciseArea.querySelector('#matchRight .match-btn[data-i="' + matchRight + '"]');
+          const lb = D.dlgBody.querySelector('#matchLeft .match-btn[data-i="' + matchLeft + '"]');
+          const rb = D.dlgBody.querySelector('#matchRight .match-btn[data-i="' + matchRight + '"]');
           if (lb) { lb.classList.add("correct"); lb.classList.remove("sel"); }
           if (rb) { rb.classList.add("correct"); rb.classList.remove("sel"); }
           matched.add(matchLeft);
@@ -697,14 +778,13 @@ function renderMatch(ex) {
             D.checkButton.style.display = "block"; D.skipButton.style.display = "none";
           }
         } else {
-          // Wrong match
-          const lb = D.exerciseArea.querySelector('#matchLeft .match-btn[data-i="' + matchLeft + '"]');
-          const rb = D.exerciseArea.querySelector('#matchRight .match-btn[data-i="' + matchRight + '"]');
+          const lb = D.dlgBody.querySelector('#matchLeft .match-btn[data-i="' + matchLeft + '"]');
+          const rb = D.dlgBody.querySelector('#matchRight .match-btn[data-i="' + matchRight + '"]');
           if (lb) { lb.classList.add("wrong"); setTimeout(() => lb.classList.remove("wrong", "sel"), 400); }
           if (rb) { rb.classList.add("wrong"); setTimeout(() => rb.classList.remove("wrong", "sel"), 400); }
         }
         matchLeft = null; matchRight = null;
-        setTimeout(() => D.exerciseArea.querySelectorAll(".match-btn").forEach(x => x.classList.remove("sel")), 400);
+        setTimeout(() => D.dlgBody.querySelectorAll(".match-btn").forEach(x => x.classList.remove("sel")), 400);
       }
     });
   });
@@ -713,16 +793,15 @@ function renderMatch(ex) {
 function renderTap(ex) {
   const phraseWords = ex.phrase.split(" ");
   const allWords = [...ex.words];
-  // Shuffle all words
   for (let i = allWords.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [allWords[i], allWords[j]] = [allWords[j], allWords[i]]; }
 
-  D.exerciseArea.innerHTML = `
+  D.dlgBody.innerHTML = `
     <div class="placement-q">Build the phrase</div>
     <div class="tap-target" id="tapTarget"></div>
     <div class="tap-grid" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center">${allWords.map((w, i) => '<button class="tap-word" data-w="' + w + '" data-i="' + i + '">' + w + '</button>').join("")}</div>`;
 
   tapWords = [];
-  D.exerciseArea.querySelectorAll(".tap-word").forEach(b => {
+  D.dlgBody.querySelectorAll(".tap-word").forEach(b => {
     b.addEventListener("click", () => {
       sndClick(); const w = b.dataset.w;
       tapWords.push(w); b.style.visibility = "hidden";
@@ -744,7 +823,7 @@ function renderTap(ex) {
 }
 
 function renderListen(ex) {
-  D.exerciseArea.innerHTML = `
+  D.dlgBody.innerHTML = `
     <div class="placement-q">${ex.question}</div>
     <button class="listen-btn" id="listenBtn">🔊</button>
     <div class="opt-grid">${ex.display.map((o, i) => '<button class="opt-btn" data-i="' + i + '">' + o + '</button>').join("")}</div>`;
@@ -754,13 +833,12 @@ function renderListen(ex) {
       u.lang = "en"; u.rate = 0.85; speechSynthesis.cancel(); speechSynthesis.speak(u);
     } catch {}
   });
-  // Auto-play
   setTimeout(() => {
     try { const u = new SpeechSynthesisUtterance(ex.audio); u.lang = "en"; u.rate = 0.85; speechSynthesis.speak(u); } catch {}
   }, 300);
-  D.exerciseArea.querySelectorAll(".opt-btn").forEach(b => b.addEventListener("click", () => {
+  D.dlgBody.querySelectorAll(".opt-btn").forEach(b => b.addEventListener("click", () => {
     sndClick(); selOpt = parseInt(b.dataset.i);
-    D.exerciseArea.querySelectorAll(".opt-btn").forEach(x => x.classList.remove("sel"));
+    D.dlgBody.querySelectorAll(".opt-btn").forEach(x => x.classList.remove("sel"));
     b.classList.add("sel"); D.checkButton.style.display = "block"; D.skipButton.style.display = "none";
   }));
 }
@@ -774,11 +852,11 @@ function checkEx(ex) {
     case "multiple":
     case "listen":
       correct = selOpt === ex.correct;
-      highlightOpts(D.exerciseArea.querySelectorAll(".opt-btn"), selOpt, ex.correct);
+      highlightOpts(D.dlgBody.querySelectorAll(".opt-btn"), selOpt, ex.correct);
       break;
     case "fillblank":
       correct = selOpt !== null && ex.options[selOpt]?.toLowerCase() === ex.answer.toLowerCase();
-      highlightOpts(D.exerciseArea.querySelectorAll(".opt-btn"), selOpt, ex.options.indexOf(ex.answer));
+      highlightOpts(D.dlgBody.querySelectorAll(".opt-btn"), selOpt, ex.options.indexOf(ex.answer));
       break;
     case "match":
       correct = selOpt === "matched";
@@ -793,7 +871,6 @@ function checkEx(ex) {
   if (correct) {
     _correct++; sndCorrect();
     S.stats.correct++; S.stars += 2;
-    // Track vocab
     const word = ex.answer || ex.options?.[ex.correct] || ex.audio || "";
     if (word) {
       const existing = S.vocab.find(v => v.word === word);
@@ -859,7 +936,6 @@ function finishLesson() {
   markDay(); trackDaily("lesson", 1); if (perfect) trackDaily("perfect", 1);
   S.hearts = Math.min(5, S.hearts + 1); refreshHearts(); save();
   checkBadges(); renderWeak();
-  // Check no_wrong badge
   if (_correct === total && total > 0) {
     const owned = S.badges || [];
     if (!owned.find(b => b.id === "no_wrong")) {
@@ -868,9 +944,8 @@ function finishLesson() {
       setTimeout(() => showCeleb("badge", BADGES.find(b => b.id === "no_wrong")), 600);
     }
   }
-  D.lessonDialog.close();
+  closeDlg();
   setTimeout(() => showCeleb("lesson", { xp: perfect ? xp + 20 : xp, stars: perfect ? 10 : 5, perfect }), 300);
-  // Notify on perfect score
   const set = getSet();
   if (perfect && set.notif) sendNotif("💎 Perfect Score!", "You got 100% in " + curLesson.title + "! Amazing!");
 }
@@ -913,11 +988,9 @@ function renderLeague() {
   D.leagueList.innerHTML = list.map((r, i) => '<li><span class="league-rank">#' + (i + 1) + '</span><span class="league-name">' + r.name + (r.name === S.user?.name ? ' (you)' : '') + '</span><span class="league-xp">' + r.xp + ' XP</span></li>').join("");
 }
 
-// ── Settings ──
+// ── Settings helpers ──
 async function askPin(pin) {
-  return new Promise(r => {
-    const p = prompt("Enter PIN:"); r(p === pin);
-  });
+  return new Promise(r => { const p = prompt("Enter PIN:"); r(p === pin); });
 }
 
 // ── Export ──
@@ -929,7 +1002,6 @@ function exportData() {
   URL.revokeObjectURL(url); toast("Data exported! 📤", "ok");
 }
 
-// ── Auto-Update ──
 // ── Online Word Fetch (Duolingo-style) ──
 const FETCH_CATEGORIES = ["animals","food","colors","family","body+parts","nature","school","home","travel","weather"];
 const FETCH_EMOJIS = ["🐶","🍎","🌈","👨‍👩‍👧","🦴","🌿","📚","🏠","✈️","☀️","🐱","🍊","🌺","👩","👁️","🌳","✏️","🛋️","🚗","❄️","🐰","🍋","🌻","👦","👂","🌙","🎒","🍳","🚌","🌧️"];
@@ -955,8 +1027,7 @@ async function fetchOnlineWords(count = 8) {
           const def = v.defs[0] ? v.defs[0].replace(/^\w+\s*/, "") : "";
           fetched.push({
             en: v.word.charAt(0).toUpperCase() + v.word.slice(1),
-            sw: def || topic,
-            online: true,
+            sw: def || topic, online: true,
             icon: FETCH_EMOJIS[Math.floor(Math.random() * FETCH_EMOJIS.length)]
           });
         }
@@ -1025,7 +1096,7 @@ function dismissNotif() {
 // ── Render All ──
 function renderAll() {
   renderMap(); refreshXP(); refreshHearts(); refreshStreak();
-  renderProfile(); renderBadges(); renderDaily(); renderWeak();
+  renderProfile(); renderBadges(); renderWeak();
   renderShop(); renderLeague();
 }
 
@@ -1044,7 +1115,6 @@ function init() {
   grab(); initAudio();
   const s = getSet(); applySet(s);
 
-  // Migration
   const old = localStorage.getItem(K.V) || "1.0.0";
   if (old !== VER) {
     const users = getUsers();
@@ -1057,68 +1127,27 @@ function init() {
     saveUsers(users);
     localStorage.setItem(K.V, VER);
   }
-  if (D.appVersion) D.appVersion.textContent = VER;
-  // Force reload if browser has old cached version
   const prevVer = sessionStorage.getItem("ss_ver");
   if (prevVer && prevVer !== VER) { sessionStorage.removeItem("ss_ver"); location.reload(); return; }
   sessionStorage.setItem("ss_ver", VER);
 
-  // Auth
   D.loginForm.addEventListener("submit", e => { e.preventDefault(); const n = D.loginName.value.trim(); const r = D.loginRole.value; if (n.length < 2) return; login(n, r); });
   D.logoutBtn.addEventListener("click", logout);
 
-  // Nav
-  $$(".bnav-btn").forEach(b => b.addEventListener("click", () => { sndClick(); goPage(b.dataset.page); }));
-  // Profile button in top bar
-  const profileBtn = document.getElementById("profileBtn");
-  if (profileBtn) profileBtn.addEventListener("click", () => { sndClick(); goPage("pageProfile"); });
-
-  // Settings
   D.settingsBtn.addEventListener("click", async () => {
     const set = getSet();
     if (set.pin) { const ok = await askPin(set.pin); if (!ok) return; }
-    applySet(set); D.settingsDialog.showModal();
+    showSettings();
   });
-  D.settingsClose.addEventListener("click", () => D.settingsDialog.close());
-  D.darkModeToggle.addEventListener("change", () => { const set = getSet(); set.dark = D.darkModeToggle.checked; saveSet(set); applySet(set); });
-  D.soundToggle.addEventListener("change", () => { const set = getSet(); set.sound = D.soundToggle.checked; saveSet(set); });
-  D.notifToggle.addEventListener("change", () => { const set = getSet(); set.notif = D.notifToggle.checked; saveSet(set); if (set.notif && typeof Notification !== "undefined") Notification.requestPermission(); });
-  D.shuffleToggle.addEventListener("change", () => { const set = getSet(); set.shuffle = D.shuffleToggle.checked; saveSet(set); });
-  D.timerSetting.addEventListener("change", () => { const set = getSet(); set.timer = parseInt(D.timerSetting.value); saveSet(set); });
-  D.pinToggle.addEventListener("click", () => {
-    const set = getSet();
-    if (set.pin) { if (confirm("Remove PIN?")) { set.pin = ""; saveSet(set); D.pinToggle.textContent = "Set"; toast("PIN removed", "info"); } }
-    else { const p = prompt("Enter 4-digit PIN:"); if (p && /^\d{4}$/.test(p)) { set.pin = p; saveSet(set); D.pinToggle.textContent = "Remove"; toast("PIN set!", "ok"); } else if (p) toast("Need 4 digits", "err"); }
+
+  D.dailyBtn.addEventListener("click", () => { showDaily(); });
+
+  D.closeDlg.addEventListener("click", () => { closeDlg(); document.getElementById("dlgBottom").style.display = ""; });
+  D.mainDialog.addEventListener("click", (e) => {
+    if (e.target === D.mainDialog) { closeDlg(); document.getElementById("dlgBottom").style.display = ""; }
   });
-  D.resetBtn.addEventListener("click", () => { if (confirm("Delete ALL progress?")) { S = fresh(); save(); renderAll(); toast("Reset!", "info"); } });
-  D.exportBtn.addEventListener("click", exportData);
 
-  // Daily
-  D.dailyBtn.addEventListener("click", () => { renderDaily(); D.dailyDialog.showModal(); });
-  D.dailyClose.addEventListener("click", () => D.dailyDialog.close());
-
-  // Placement
-  D.placementClose.addEventListener("click", () => { D.placementDialog.close(); });
-
-  // Lesson
-  D.closeLesson.addEventListener("click", closeLesson);
-  D.lessonDialog.addEventListener("click", (e) => { if (e.target === D.lessonDialog) closeLesson(); });
-
-  // Celebration
-  D.celebContinue.addEventListener("click", () => { D.celebDialog.close(); });
-
-  // Result Continue button
-  if (D.resultContinue) {
-    D.resultContinue.addEventListener("click", function() {
-      try { D.resultDialog.close(); } catch {}
-      renderAll();
-      goPage("pageHome");
-    });
-  }
-
-  // Practice
   D.practiceBtn.addEventListener("click", () => {
-    // Find weakest category and practice it
     const wc = S.weakCategories || {};
     const entries = Object.entries(wc).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
     if (entries.length > 0) {
@@ -1128,17 +1157,13 @@ function init() {
     }
   });
 
-  // Heart regen
   setInterval(() => { if (S.user) regenHearts(); }, 60000);
 
-  // Notification toast close
   const ntClose = document.getElementById("notifClose");
   if (ntClose) ntClose.addEventListener("click", dismissNotif);
 
-  // Notifications
   requestNotifPermission();
 
-  // Restore
   const saved = localStorage.getItem(K.C);
   if (saved) { try { const u = JSON.parse(saved); if (u?.name) { login(u.name); return; } } catch {} }
   renderSavedUsers();
