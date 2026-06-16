@@ -83,9 +83,17 @@ h1{font-size:1.6rem;font-weight:800}h2{font-size:1.2rem;font-weight:700}h3{font-
 .pg{display:none}.pg.active{display:block;animation:fadeUp .3s ease-out}
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
-/* ── Welcome / Level Bar ── */
-.welcome-bar{display:flex;align-items:center;gap:12px;margin-bottom:16px;background:var(--c);padding:14px;border-radius:var(--R);box-shadow:var(--sh);transition:background .3s}
-.welcome-bar b{font-size:1rem}
+/* ── Mascot ── */
+.mascot-row{display:flex;align-items:center;gap:14px;margin-bottom:16px;background:var(--c);padding:16px;border-radius:var(--R);box-shadow:var(--sh);transition:background .3s}
+.mascot-face{position:relative;width:56px;height:56px;flex-shrink:0}
+.mf-head{width:48px;height:44px;background:var(--gd);border-radius:50%;position:absolute;bottom:0;left:4px;z-index:2}
+.mf-ear{width:16px;height:16px;background:var(--o);border-radius:50%;position:absolute;z-index:1}
+.mf-ear-l{top:0;left:0}.mf-ear-r{top:0;right:0}
+.mf-eye{width:6px;height:7px;background:var(--t);border-radius:50%;position:absolute;top:14px}
+.mf-eye-l{left:12px}.mf-eye-r{right:12px}
+.mf-nose{width:8px;height:5px;background:var(--o);border-radius:50%;position:absolute;top:22px;left:50%;transform:translateX(-50%)}
+.mf-mouth{width:14px;height:7px;border:2px solid var(--o);border-top:none;border-radius:0 0 10px 10px;position:absolute;top:27px;left:50%;transform:translateX(-50%)}
+.mascot-speech{flex:1}.mascot-speech b{font-size:.95rem;display:block;margin-bottom:2px}
 .xp-row{display:flex;align-items:center;gap:8px;margin-bottom:16px;background:var(--c);padding:10px 14px;border-radius:var(--R);box-shadow:var(--sh);transition:background .3s}
 .xp-label{font-size:.75rem;font-weight:700;color:var(--p);white-space:nowrap}
 .xp-track{flex:1;height:10px;background:var(--bg);border-radius:10px;overflow:hidden;transition:background .3s}
@@ -155,7 +163,8 @@ h1{font-size:1.6rem;font-weight:800}h2{font-size:1.2rem;font-weight:700}h3{font-
 dialog{border:none;padding:0;background:var(--c);box-shadow:0 20px 60px rgba(0,0,0,.2);transition:background .3s}
 dialog::backdrop{background:rgba(0,0,0,.4);backdrop-filter:blur(4px)}
 .dlg{border-radius:var(--R);width:calc(100% - 32px);max-width:440px}
-.dlg-lg{max-width:480px}.dlg-sm{max-width:360px}
+.dlg-lg{max-width:480px;height:80dvh;display:flex;flex-direction:column}.dlg-sm{max-width:360px}
+.dlg-lg .dlg-body{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:stretch;min-height:0}
 .dlg-top{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--bd)}
 .dlg-top h2,.dlg-top h3{font-size:1rem}
 .dlg-x{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:1.4rem;color:var(--t2);transition:background .15s}
