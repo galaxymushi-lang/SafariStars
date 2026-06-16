@@ -312,7 +312,9 @@ function showCeleb(type, data) {
     D.resultDesc.textContent = data.desc;
     D.resultLevel.textContent = data.level;
     D.resultWeak.innerHTML = data.weakHTML;
-    launchConfetti(D.celebConfetti);
+    D.resultDialog.showModal();
+    launchConfetti(document.getElementById("confettiCanvas"));
+    return;
   }
   D.celebDialog.showModal();
 }
@@ -948,6 +950,7 @@ function init() {
 
   // Celebration
   D.celebContinue.addEventListener("click", () => D.celebDialog.close());
+  D.resultContinue.addEventListener("click", () => { D.resultDialog.close(); renderAll(); });
 
   // Practice
   D.practiceBtn.addEventListener("click", () => {
