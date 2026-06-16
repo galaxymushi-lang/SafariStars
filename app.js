@@ -9,7 +9,7 @@ const $$ = s => document.querySelectorAll(s);
 
 const D = {};
 function initD() {
-  const ids = "authScreen,appShell,loginForm,loginName,loginRole,savedUsers,lessonMap,lessonDialog,closeLesson,exerciseArea,feedbackBox,checkButton,skipButton,lessonProgress,lessonHearts,lessonTimer,celebDialog,celebContent,celebEmoji,celebTitle,celebDesc,celebEarned,celebContinue,confettiCanvas,streakDisplay,heartsDisplay,xpDisplay,levelDisplay,xpBarFill,xpProgressText,greetLine,greetSub,profileName,profileRole,statStreak,statStars,statXP,statLessons,statCorrect,statWords,badgeGrid,shopGrid,shopStars,leagueList,settingsBtn,settingsClose,settingsDialog,darkModeToggle,soundToggle,notifToggle,shuffleToggle,timerSetting,pinToggle,resetBtn,exportBtn,appVersion,dailyBtn,dailyDialog,dailyClose,dailyBody,mascotMini,logoutBtn,topLogout,celebDialog,celebContent".split(",");
+  const ids = "authScreen,appShell,loginForm,loginName,loginRole,savedUsers,lessonMap,lessonDialog,closeLesson,exerciseArea,feedbackBox,checkButton,skipButton,lessonProgress,lessonHearts,lessonTimer,celebDialog,celebContent,celebEmoji,celebTitle,celebDesc,celebEarned,celebContinue,confettiCanvas,streakDisplay,heartsDisplay,xpDisplay,levelDisplay,xpBarFill,xpProgressText,greetLine,greetSub,profileName,profileRole,statStreak,statStars,statXP,statLessons,statCorrect,statWords,badgeGrid,shopGrid,shopStars,leagueList,settingsBtn,settingsClose,settingsDialog,darkModeToggle,soundToggle,notifToggle,shuffleToggle,timerSetting,pinToggle,resetBtn,exportBtn,appVersion,dailyBtn,dailyDialog,dailyClose,dailyBody,mascotMini,logoutBtn".split(",");
   ids.forEach(id => D[id] = document.getElementById(id));
 }
 
@@ -331,6 +331,7 @@ let currentLesson=null,currentIdx=0,selectedOpt=null,matchSel=null,tappedWords=[
 
 function openLesson(id){
   currentLesson=LESSONS.find(l=>l.id===id);if(!currentLesson)return;
+  currentLesson.exercises.forEach(e=>delete e._retried);
   const s=getSettings();
   exerciseOrder=currentLesson.exercises.map((_,i)=>i);
   if(s.shuffle)for(let i=exerciseOrder.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[exerciseOrder[i],exerciseOrder[j]]=[exerciseOrder[j],exerciseOrder[i]];}
