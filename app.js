@@ -13,7 +13,7 @@ function grab() {
    "checkButton","skipButton","lessonProgress","lessonHearts","lessonTimer",
    "celebDialog","celebIcon","celebTitle","celebDesc","celebEarned","celebContinue","celebConfetti",
    "streakDisplay","heartsDisplay","xpDisplay","levelDisplay","xpBarFill","xpProgressText",
-   "greetLine","greetSub","profileName","profileRole",
+   "greetLine","greetSub","profileName","profileRole","logoutBtn",
    "statStreak","statStars","statXP","statLessons","statCorrect","statWords",
    "badgeGrid","weaknessList","shopGrid","shopStars","leagueList",
    "settingsBtn","settingsDialog","settingsClose","darkModeToggle","soundToggle",
@@ -419,7 +419,7 @@ function renderPlaceQ() {
   const total = placeQs.length;
   if (D.placementProgress) D.placementProgress.textContent = (placeIdx + 1) + " / " + total;
   if (D.placementBarFill) D.placementBarFill.style.width = ((placeIdx / total) * 100) + "%";
-  if (D.placementFeedback) { D.placementFeedback.className = "lesson-feedback"; D.placementFeedback.textContent = ""; }
+  if (D.placementFeedback) { D.placementFeedback.className = "fb"; D.placementFeedback.textContent = ""; }
   if (D.placementCheck) D.placementCheck.style.display = "none";
 
   D.placementBody.innerHTML = `
@@ -450,13 +450,13 @@ function checkPlaceQ() {
   // Highlight
   const btns = D.placementBody.querySelectorAll(".opt-btn");
   btns.forEach((b, i) => {
-    b.classList.add("disabled");
+    b.classList.add("off");
     if (i === q.correct) b.classList.add("correct");
     if (i === placeSelected && !correct) b.classList.add("wrong");
   });
 
   if (D.placementFeedback) {
-    D.placementFeedback.className = "lesson-feedback show " + (correct ? "ok" : "fail");
+    D.placementFeedback.className = "fb show " + (correct ? "ok" : "fail");
     D.placementFeedback.textContent = correct ? "✅ Correct!" : "❌ Answer: " + q.options[q.correct];
   }
 
@@ -481,7 +481,7 @@ function finishPlacement() {
       '<li>⚠️ ' + u.replace(/Unit \d+ - /, "") + '</li>'
     ).join("") + "</ul>";
   } else {
-    weakHTML = "<p style='color:var(--green);font-weight:600'>🎉 Great — no weak areas!</p>";
+    weakHTML = "<p style='color:var(--g);font-weight:600'>🎉 Great — no weak areas!</p>";
   }
 
   // Unlock lessons based on placement score
@@ -580,7 +580,7 @@ function renderEx() {
   refreshHearts();
   D.checkButton.style.display = "none";
   D.skipButton.style.display = "block";
-  D.feedbackBox.className = "lesson-feedback";
+  D.feedbackBox.className = "fb";
   startTimer();
 
   switch (ex.type) {
@@ -610,7 +610,7 @@ function renderMultiple(ex) {
 function renderFillBlank(ex) {
   const parts = ex.sentence.split("___");
   D.exerciseArea.innerHTML = `
-    <div class="placement-q">${parts[0]}<span style="display:inline-block;min-width:80px;border-bottom:3px solid var(--orange);margin:0 4px">&nbsp;</span>${parts[1] || ''}</div>
+    <div class="placement-q">${parts[0]}<span style="display:inline-block;min-width:80px;border-bottom:3px solid var(--o);margin:0 4px">&nbsp;</span>${parts[1] || ''}</div>
     <div class="opt-grid">${ex.options.map((o, i) => '<button class="opt-btn" data-i="' + i + '">' + o + '</button>').join("")}</div>`;
   D.exerciseArea.querySelectorAll(".opt-btn").forEach(b => b.addEventListener("click", () => {
     sndClick(); selOpt = parseInt(b.dataset.i);
@@ -790,7 +790,7 @@ function checkEx(ex) {
 
 function highlightOpts(btns, sel, correctIdx) {
   btns.forEach((b, i) => {
-    b.classList.add("disabled");
+    b.classList.add("off");
     if (i === correctIdx) b.classList.add("correct");
     if (i === sel && i !== correctIdx) b.classList.add("wrong");
   });
@@ -798,7 +798,7 @@ function highlightOpts(btns, sel, correctIdx) {
 
 function showFB(msg, type) {
   D.feedbackBox.textContent = msg;
-  D.feedbackBox.className = "lesson-feedback show " + type;
+  D.feedbackBox.className = "fb show " + type;
 }
 
 function startTimer() {
@@ -895,8 +895,8 @@ async function checkUpdate() {
       if (banner) banner.remove();
       banner = document.createElement("div");
       banner.id = "updateBanner";
-      banner.style.cssText = "position:fixed;bottom:0;left:0;right:0;z-index:9999;background:var(--green);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.85rem;box-shadow:0 -2px 12px rgba(0,0,0,.2);animation:fadeUp .3s ease-out";
-      banner.innerHTML = '<span><strong>Update v' + v.version + '</strong> is ready!</span><button onclick="location.reload()" style="padding:8px 20px;border:none;border-radius:10px;background:#fff;color:var(--green);font-weight:700;cursor:pointer;font-size:.85rem;box-shadow:0 2px 8px rgba(0,0,0,.15)">Refresh</button>';
+      banner.style.cssText = "position:fixed;bottom:0;left:0;right:0;z-index:9999;background:var(--g);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.85rem;box-shadow:0 -2px 12px rgba(0,0,0,.2);animation:fadeUp .3s ease-out";
+      banner.innerHTML = '<span><strong>Update v' + v.version + '</strong> is ready!</span><button onclick="location.reload()" style="padding:8px 20px;border:none;border-radius:10px;background:#fff;color:var(--g);font-weight:700;cursor:pointer;font-size:.85rem;box-shadow:0 2px 8px rgba(0,0,0,.15)">Refresh</button>';
       document.body.appendChild(banner);
     }
   } catch {}
