@@ -245,7 +245,6 @@ function freshState() {
     lastWeekReset: 0,
     weeklyChallenge: {},
     bossDefeated: [],
-    bossLessons: 0,
     lastLogin: 0,
     studyMinutes: 0,
     lastStudyStart: 0
@@ -373,7 +372,6 @@ function saveState() {
     lastWeekReset: S.lastWeekReset || 0,
     weeklyChallenge: S.weeklyChallenge || {},
     bossDefeated: S.bossDefeated || [],
-    bossLessons: S.bossLessons || 0,
     lastLogin: S.lastLogin || 0,
     studyMinutes: S.studyMinutes || 0,
     lastStudyStart: S.lastStudyStart || 0
@@ -396,6 +394,8 @@ function addXP(amount) {
   if (!S.user) return;
   S.xp += amount;
   S.stats.xp += amount;
+  trackWeeklyXp(amount);
+  trackWeeklyChallenge("w_xp", amount);
   while (S.xp >= xpNeeded(S.xpLevel)) {
     S.xp -= xpNeeded(S.xpLevel);
     S.xpLevel++;
@@ -539,6 +539,13 @@ function checkBadges() {
   // All lessons badge
   const allDone = LESSONS.filter((l) => !l.id.startsWith("boss_")).every((l) => S.progress[l.id]?.completed);
   if (!has("all_lessons") && allDone) newlyEarned.push("all_lessons");
+
+  // All units badge
+  const units = [...new Set(LESSONS.filter((l) => !l.id.startsWith("boss_")).map((l) => l.unit))];
+  const allUnitsDone = units.every((unit) =>
+    LESSONS.filter((l) => l.unit === unit && !l.id.startsWith("boss_")).every((l) => S.progress[l.id]?.completed)
+  );
+  if (!has("all_units") && allUnitsDone) newlyEarned.push("all_units");
 
   // Vocab mastery badge
   const mastered = (S.vocab || []).filter((v) => (v.mastery || 0) >= 3).length;
@@ -1167,6 +1174,7 @@ let timerInterval = null;
 let timerSeconds = 0;
 let correctCount = 0;
 let totalAttempts = 0;
+let exerciseAdvancing = false;
 
 function openLesson(lessonId) {
   currentLesson = LESSONS.find((l) => l.id === lessonId);
@@ -1646,8 +1654,6 @@ function checkExercise(exercise) {
     addXP(xpAmount);
     trackDaily("xp", xpAmount);
     trackDaily("words", 1);
-    trackWeeklyXp(xpAmount);
-    trackWeeklyChallenge("w_xp", xpAmount);
     trackWeeklyChallenge("w_learn", 1);
     trackWeak(currentLesson.unit, false);
 
@@ -1692,8 +1698,10 @@ function checkExercise(exercise) {
   }
 
   saveState();
+  exerciseAdvancing = true;
   setTimeout(() => {
     if (!currentLesson) return;
+    exerciseAdvancing = false;
     exerciseIndex++;
     renderExercise();
   }, 1300);
@@ -1737,7 +1745,7 @@ function startTimer() {
       if (!loseHeart()) {
         closeLesson();
       } else {
-        setTimeout(() => { if (!currentLesson) return; exerciseIndex++; renderExercise(); }, 1000);
+        setTimeout(() => { if (!currentLesson || exerciseAdvancing) return; exerciseAdvancing = false; exerciseIndex++; renderExercise(); }, 1000);
       }
     }
   }, 1000);
@@ -1791,15 +1799,15 @@ function finishLesson() {
     at: Date.now()
   };
   S.stats.lessonsDone++;
-  if (!isBoss) S.bossLessons = (S.bossLessons || 0) + 1;
+  if (isPerfect) S.stats.perfectLessons = (S.stats.perfectLessons || 0) + 1;
   S.stars += isPerfect ? 10 : 5;
-  addXP(isPerfect ? xp + 20 : xp);
+  if (isPerfect) addXP(20);
   markDay();
   trackDaily("lesson", 1);
   trackDaily("perfect", isPerfect ? 1 : 0);
   trackWeeklyChallenge("w_lessons", 1);
 
-  // Speed run badge
+  // Speed badges
   const elapsed = (Date.now() - (S._lessonStart || Date.now())) / 1000;
   if (elapsed < 60 && !isBoss) {
     const owned = S.badges || [];
@@ -1807,6 +1815,14 @@ function finishLesson() {
       S.badges.push({ id: "speed_run", at: Date.now() });
       sndBadge();
       toast("⏱️ Speed Run badge unlocked!", "ok");
+    }
+  }
+  if (elapsed < 120 && !isBoss) {
+    const owned = S.badges || [];
+    if (!owned.find((b) => b.id === "speed_demon")) {
+      S.badges.push({ id: "speed_demon", at: Date.now() });
+      sndBadge();
+      toast("⚡ Speed Demon badge unlocked!", "ok");
     }
   }
 
@@ -1822,12 +1838,6 @@ function finishLesson() {
   // Quest tracking
   S.stats.questsDone = (S.stats.questsDone || 0);
 
-  S.hearts = Math.min(5, S.hearts + 1);
-  refreshHeartsDisplay();
-  saveState();
-  checkBadges();
-  renderWeakAreas();
-
   // Check no_wrong badge
   if (correctCount === total && total > 0) {
     const owned = S.badges || [];
@@ -1837,15 +1847,11 @@ function finishLesson() {
     }
   }
 
-  // Check all_lessons badge
-  const allDone = LESSONS.filter((l) => !l.id.startsWith("boss_")).every((l) => S.progress[l.id]?.completed);
-  if (allDone) {
-    const owned = S.badges || [];
-    if (!owned.find((b) => b.id === "all_lessons")) {
-      S.badges.push({ id: "all_lessons", at: Date.now() });
-      sndBadge();
-    }
-  }
+  S.hearts = Math.min(5, S.hearts + 1);
+  refreshHeartsDisplay();
+  saveState();
+  checkBadges();
+  renderWeakAreas();
 
   // Show result
   const levelName = getLevelName(S.xpLevel);
@@ -2600,7 +2606,11 @@ function login(name, role) {
       hearts: 5, heartsRegen: Date.now(),
       vocab: [], badges: [], dailyActivity: {},
       streakFreeze: 0, daily: {}, weakCategories: {},
-      wrongWords: [], placed: false
+      wrongWords: [], placed: false,
+      friends: [], ownedAvatars: [], avatar: { frame: null, pet: null, bg: null },
+      weeklyXp: 0, lastWeekReset: 0, weeklyChallenge: {},
+      bossDefeated: [], bossLessons: 0, lastLogin: 0,
+      studyMinutes: 0, lastStudyStart: 0
     };
     saveUsers(users);
   }
@@ -2680,7 +2690,6 @@ function init() {
         if (u.lastWeekReset === undefined) u.lastWeekReset = 0;
         if (u.weeklyChallenge === undefined) u.weeklyChallenge = {};
         if (u.bossDefeated === undefined) u.bossDefeated = [];
-        if (u.bossLessons === undefined) u.bossLessons = 0;
         if (u.lastLogin === undefined) u.lastLogin = 0;
         if (u.studyMinutes === undefined) u.studyMinutes = 0;
         if (u.lastStudyStart === undefined) u.lastStudyStart = 0;
