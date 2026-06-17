@@ -13,7 +13,7 @@ const K = {
   W: P + "weak",
   PL: P + "placed"
 };
-const VER = "6.0.0";
+const VER = "7.0.0";
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => document.querySelectorAll(sel);
 const M = document.getElementById("mainArea");
@@ -25,6 +25,77 @@ const MSG = {
   greet: ["Welcome back!", "Hey there!", "Good to see you!", "Let's go!", "Ready?"]
 };
 
+const LEVEL_NAMES = [
+  "Novice","Novice","Novice","Novice","Novice",
+  "Apprentice","Apprentice","Apprentice","Apprentice","Apprentice",
+  "Learner","Learner","Learner","Learner","Learner",
+  "Student","Student","Student","Student","Student",
+  "Scholar","Scholar","Scholar","Scholar","Scholar",
+  "Expert","Expert","Expert","Expert","Expert",
+  "Expert","Expert","Expert","Expert","Expert",
+  "Master","Master","Master","Master","Master",
+  "Master","Master","Master","Master","Master",
+  "Sage","Sage","Sage","Sage","Sage",
+  "Sage","Sage","Sage","Sage","Sage",
+  "Sage","Sage","Sage","Sage","Sage",
+  "Sage","Sage","Sage","Sage","Sage",
+  "Sage","Sage","Sage","Sage","Sage",
+  "Sage","Sage","Sage","Sage","Sage",
+  "Sage","Sage","Sage","Sage","Sage",
+  "Sage","Sage","Sage","Sage","Sage",
+  "Legend","Legend","Legend","Legend","Legend",
+  "Legend","Legend","Legend","Legend","Legend",
+  "Mythic","Mythic","Mythic","Mythic","Mythic",
+  "Mythic","Mythic","Mythic","Mythic","Mythic"
+];
+
+const LEAGUES = [
+  { id: "bronze", name: "Bronze", icon: "🥉", minXP: 0, color: "#CD7F32" },
+  { id: "silver", name: "Silver", icon: "🥈", minXP: 500, color: "#C0C0C0" },
+  { id: "gold", name: "Gold", icon: "🥇", minXP: 1500, color: "#FFD700" },
+  { id: "diamond", name: "Diamond", icon: "💎", minXP: 4000, color: "#B9F2FF" }
+];
+
+const AVATARS = [
+  { id: "frame_gold", name: "Gold Frame", cost: 100, icon: "🖼️", type: "frame", color: "#FFD700" },
+  { id: "frame_diamond", name: "Diamond Frame", cost: 200, icon: "🖼️", type: "frame", color: "#B9F2FF" },
+  { id: "frame_fire", name: "Fire Frame", cost: 150, icon: "🖼️", type: "frame", color: "#FF4B4B" },
+  { id: "frame_star", name: "Star Frame", cost: 120, icon: "🖼️", type: "frame", color: "#FFC800" },
+  { id: "frame_crown", name: "Crown Frame", cost: 180, icon: "👑", type: "frame", color: "#CE82FF" },
+  { id: "frame_rainbow", name: "Rainbow Frame", cost: 250, icon: "🌈", type: "frame", color: "#FF86D0" },
+  { id: "pet_lion", name: "Lion Cub", cost: 80, icon: "🦁", type: "pet" },
+  { id: "pet_parrot", name: "Parrot", cost: 60, icon: "🦜", type: "pet" },
+  { id: "pet_turtle", name: "Turtle", cost: 50, icon: "🐢", type: "pet" },
+  { id: "pet_monkey", name: "Monkey", cost: 70, icon: "🐒", type: "pet" },
+  { id: "bg_safari", name: "Safari BG", cost: 100, icon: "🌿", type: "bg" },
+  { id: "bg_ocean", name: "Ocean BG", cost: 100, icon: "🌊", type: "bg" },
+  { id: "bg_space", name: "Space BG", cost: 100, icon: "🚀", type: "bg" }
+];
+
+const WEEKLY_CHALLENGES = [
+  { id: "w_learn", icon: "📝", label: "Learn 20 words", need: 20 },
+  { id: "w_lessons", icon: "📚", label: "Complete 5 lessons", need: 5 },
+  { id: "w_xp", icon: "✨", label: "Earn 200 XP", need: 200 }
+];
+
+const TUTOR_TIPS = {
+  default: [
+    "Try to remember the pattern!",
+    "Practice makes perfect!",
+    "You'll get it next time!"
+  ],
+  greetings: "Greetings are used at specific times of day. 'Good morning' is for before noon.",
+  numbers: "Numbers in English follow a pattern. Practice counting out loud!",
+  family: "Family words are very common. Mother = Mama, Father = Baba.",
+  colors: "Colors are adjectives that describe things. Red = Nyekundu!",
+  food: "Food words help you order meals. Water = Maji, Bread = Mkate.",
+  animals: "African animals have unique names. Lion = Simba, Elephant = Tembo.",
+  body: "Body parts are basic vocabulary. Head = Kichwa, Hand = Mkono.",
+  phrases: "Common phrases are used every day. Thank you = Asante.",
+  weather: "Weather words describe the sky. Sunny = Jua kali, Rainy = Mvua.",
+  default_tip: "Keep practicing and you will remember!"
+};
+
 const BADGES = [
   { id: "first_word", icon: "🐣", name: "First Steps", desc: "Learn your first word" },
   { id: "five_lessons", icon: "📚", name: "Bookworm", desc: "Complete 5 lessons" },
@@ -32,20 +103,34 @@ const BADGES = [
   { id: "twenty_lessons", icon: "🏅", name: "Honor Roll", desc: "Complete 20 lessons" },
   { id: "streak_3", icon: "🔥", name: "On Fire", desc: "3-day streak" },
   { id: "streak_7", icon: "💎", name: "Week Warrior", desc: "7-day streak" },
+  { id: "streak_14", icon: "⚡", name: "Fortnight Fighter", desc: "14-day streak" },
   { id: "streak_30", icon: "👑", name: "Unstoppable", desc: "30-day streak" },
   { id: "words_10", icon: "📝", name: "Word Collector", desc: "Learn 10 words" },
   { id: "words_25", icon: "📖", name: "Storyteller", desc: "Learn 25 words" },
   { id: "words_50", icon: "🏆", name: "Vocabulary Master", desc: "Learn 50 words" },
+  { id: "words_100", icon: "📚", name: "Word Wizard", desc: "Learn 100 words" },
   { id: "perfect_3", icon: "⭐", name: "Rising Star", desc: "3 perfect lessons" },
   { id: "perfect_10", icon: "🌟", name: "Superstar", desc: "10 perfect lessons" },
+  { id: "perfect_25", icon: "🎯", name: "Perfectionist", desc: "25 perfect lessons" },
   { id: "xp_100", icon: "🚀", name: "Level Up", desc: "Earn 100 XP" },
   { id: "xp_500", icon: "🎖️", name: "Veteran", desc: "Earn 500 XP" },
   { id: "xp_1000", icon: "🌍", name: "Globe Trotter", desc: "Earn 1000 XP" },
+  { id: "xp_5000", icon: "🏅", name: "XP Champion", desc: "Earn 5000 XP" },
   { id: "no_wrong", icon: "💎", name: "Diamond", desc: "Complete with 0 mistakes" },
   { id: "speed_demon", icon: "⚡", name: "Speed Demon", desc: "Finish under 2 minutes" },
+  { id: "speed_run", icon: "⏱️", name: "Speed Run", desc: "Lesson under 60s" },
   { id: "night_owl", icon: "🦉", name: "Night Owl", desc: "Study after 9 PM" },
   { id: "early_bird", icon: "🌅", name: "Early Bird", desc: "Study before 8 AM" },
-  { id: "all_units", icon: "🎯", name: "Safari Master", desc: "Complete all units" }
+  { id: "night_master", icon: "🌙", name: "Night Master", desc: "5 lessons at night" },
+  { id: "early_master", icon: "☀️", name: "Early Master", desc: "5 lessons morning" },
+  { id: "all_units", icon: "🎯", name: "Safari Master", desc: "Complete all units" },
+  { id: "first_boss", icon: "🐉", name: "Boss Slayer", desc: "Defeat first boss" },
+  { id: "vocab_master_50", icon: "📖", name: "Vocab Expert", desc: "50 words mastered" },
+  { id: "league_gold", icon: "🥇", name: "Gold League", desc: "Reach Gold league" },
+  { id: "league_diamond", icon: "💎", name: "Diamond League", desc: "Reach Diamond league" },
+  { id: "all_lessons", icon: "🎓", name: "Graduate", desc: "Complete all lessons" },
+  { id: "friend_3", icon: "👫", name: "Social Butterfly", desc: "Add 3 friends" },
+  { id: "quest_7", icon: "🏆", name: "Quest Champion", desc: "Complete all quests 7x" }
 ];
 
 const SHOP = [
@@ -57,7 +142,9 @@ const SHOP = [
 const DAILY = [
   { id: "lesson", icon: "📚", label: "Complete 1 lesson", need: 1 },
   { id: "xp", icon: "✨", label: "Earn 30 XP", need: 30 },
-  { id: "perfect", icon: "💎", label: "Get a perfect score", need: 1 }
+  { id: "perfect", icon: "💎", label: "Get a perfect score", need: 1 },
+  { id: "words", icon: "📝", label: "Practice 5 words", need: 5 },
+  { id: "minutes", icon: "⏱️", label: "Study 10 minutes", need: 10 }
 ];
 
 const FETCH_CATEGORIES = [
@@ -136,7 +223,7 @@ function freshState() {
   return {
     user: null,
     progress: {},
-    stats: { lessonsDone: 0, wordsLearned: 0, correct: 0, wrong: 0, xp: 0 },
+    stats: { lessonsDone: 0, wordsLearned: 0, correct: 0, wrong: 0, xp: 0, perfectLessons: 0, nightLessons: 0, earlyLessons: 0, questsDone: 0 },
     streak: 0,
     stars: 30,
     xp: 0,
@@ -150,7 +237,18 @@ function freshState() {
     daily: {},
     weakCategories: {},
     wrongWords: [],
-    placed: false
+    placed: false,
+    friends: [],
+    ownedAvatars: [],
+    avatar: { frame: null, pet: null, bg: null },
+    weeklyXp: 0,
+    lastWeekReset: 0,
+    weeklyChallenge: {},
+    bossDefeated: [],
+    bossLessons: 0,
+    lastLogin: 0,
+    studyMinutes: 0,
+    lastStudyStart: 0
   };
 }
 
@@ -206,6 +304,15 @@ function sndBadge() {
   [784, 988, 1175, 1319].forEach((f, i) => setTimeout(() => playTone(f, 0.1), i * 80));
 }
 
+function sndBoss() {
+  [392, 440, 523, 659, 784, 880, 1047].forEach((f, i) => setTimeout(() => playTone(f, 0.15, "sawtooth", 0.08), i * 80));
+}
+
+function sndCoin() {
+  playTone(988, 0.06);
+  setTimeout(() => playTone(1319, 0.1), 60);
+}
+
 // ══════════════════════════════════════
 // STORAGE
 // ══════════════════════════════════════
@@ -258,7 +365,18 @@ function saveState() {
     daily: S.daily,
     weakCategories: S.weakCategories,
     wrongWords: S.wrongWords,
-    placed: S.placed
+    placed: S.placed,
+    friends: S.friends || [],
+    ownedAvatars: S.ownedAvatars || [],
+    avatar: S.avatar || { frame: null, pet: null, bg: null },
+    weeklyXp: S.weeklyXp || 0,
+    lastWeekReset: S.lastWeekReset || 0,
+    weeklyChallenge: S.weeklyChallenge || {},
+    bossDefeated: S.bossDefeated || [],
+    bossLessons: S.bossLessons || 0,
+    lastLogin: S.lastLogin || 0,
+    studyMinutes: S.studyMinutes || 0,
+    lastStudyStart: S.lastStudyStart || 0
   };
   saveUsers(users);
 }
@@ -378,6 +496,7 @@ function checkBadges() {
   if (!has("words_10") && S.vocab.length >= 10) newlyEarned.push("words_10");
   if (!has("words_25") && S.vocab.length >= 25) newlyEarned.push("words_25");
   if (!has("words_50") && S.vocab.length >= 50) newlyEarned.push("words_50");
+  if (!has("words_100") && S.vocab.length >= 100) newlyEarned.push("words_100");
 
   // Lesson badges
   if (!has("five_lessons") && S.stats.lessonsDone >= 5) newlyEarned.push("five_lessons");
@@ -387,23 +506,49 @@ function checkBadges() {
   // Streak badges
   if (!has("streak_3") && S.streak >= 3) newlyEarned.push("streak_3");
   if (!has("streak_7") && S.streak >= 7) newlyEarned.push("streak_7");
+  if (!has("streak_14") && S.streak >= 14) newlyEarned.push("streak_14");
   if (!has("streak_30") && S.streak >= 30) newlyEarned.push("streak_30");
 
   // XP badges
   if (!has("xp_100") && S.stats.xp >= 100) newlyEarned.push("xp_100");
   if (!has("xp_500") && S.stats.xp >= 500) newlyEarned.push("xp_500");
   if (!has("xp_1000") && S.stats.xp >= 1000) newlyEarned.push("xp_1000");
+  if (!has("xp_5000") && S.stats.xp >= 5000) newlyEarned.push("xp_5000");
 
   // Perfect badge
-  if (!has("perfect_3") && S.stats.lessonsDone >= 3) {
-    const accuracy = S.stats.correct / Math.max(1, S.stats.correct + S.stats.wrong);
-    if (accuracy >= 0.95) newlyEarned.push("perfect_3");
-  }
+  const perfectCount = S.stats.perfectLessons || 0;
+  if (!has("perfect_3") && perfectCount >= 3) newlyEarned.push("perfect_3");
+  if (!has("perfect_10") && perfectCount >= 10) newlyEarned.push("perfect_10");
+  if (!has("perfect_25") && perfectCount >= 25) newlyEarned.push("perfect_25");
 
   // Time-based badges
   const hour = new Date().getHours();
   if (!has("night_owl") && hour >= 21 && S.stats.lessonsDone > 0) newlyEarned.push("night_owl");
   if (!has("early_bird") && hour < 8 && S.stats.lessonsDone > 0) newlyEarned.push("early_bird");
+  if (!has("night_master") && (S.stats.nightLessons || 0) >= 5) newlyEarned.push("night_master");
+  if (!has("early_master") && (S.stats.earlyLessons || 0) >= 5) newlyEarned.push("early_master");
+
+  // Boss badge
+  if (!has("first_boss") && (S.bossDefeated || []).length >= 1) newlyEarned.push("first_boss");
+
+  // League badges
+  const league = getLeague(S.weeklyXp || 0);
+  if (!has("league_gold") && (league.id === "gold" || league.id === "diamond")) newlyEarned.push("league_gold");
+  if (!has("league_diamond") && league.id === "diamond") newlyEarned.push("league_diamond");
+
+  // All lessons badge
+  const allDone = LESSONS.filter((l) => !l.id.startsWith("boss_")).every((l) => S.progress[l.id]?.completed);
+  if (!has("all_lessons") && allDone) newlyEarned.push("all_lessons");
+
+  // Vocab mastery badge
+  const mastered = (S.vocab || []).filter((v) => (v.mastery || 0) >= 3).length;
+  if (!has("vocab_master_50") && mastered >= 50) newlyEarned.push("vocab_master_50");
+
+  // Friend badge
+  if (!has("friend_3") && (S.friends || []).length >= 3) newlyEarned.push("friend_3");
+
+  // Quest badge
+  if (!has("quest_7") && (S.stats.questsDone || 0) >= 7) newlyEarned.push("quest_7");
 
   // Award new badges
   newlyEarned.forEach((id) => {
@@ -486,6 +631,151 @@ function trackDaily(id, amount = 1) {
 }
 
 // ══════════════════════════════════════
+// LEVEL NAMES & LEAGUES
+// ══════════════════════════════════════
+function getLevelName(level) {
+  const idx = Math.min(level - 1, LEVEL_NAMES.length - 1);
+  return LEVEL_NAMES[idx] || "Mythic";
+}
+
+function getLeague(xp) {
+  let league = LEAGUES[0];
+  for (const l of LEAGUES) {
+    if (xp >= l.minXP) league = l;
+  }
+  return league;
+}
+
+function resetWeeklyLeague() {
+  const now = Date.now();
+  const lastReset = S.lastWeekReset || 0;
+  const weekMs = 7 * 86400000;
+  if (now - lastReset > weekMs) {
+    S.weeklyXp = 0;
+    S.weeklyChallenge = {};
+    S.lastWeekReset = now;
+    saveState();
+  }
+}
+
+function trackWeeklyXp(amount) {
+  S.weeklyXp = (S.weeklyXp || 0) + amount;
+  saveState();
+}
+
+function trackWeeklyChallenge(id, amount = 1) {
+  if (!S.weeklyChallenge) S.weeklyChallenge = {};
+  S.weeklyChallenge[id] = (S.weeklyChallenge[id] || 0) + amount;
+  saveState();
+}
+
+// ══════════════════════════════════════
+// BOSS LEVELS
+// ══════════════════════════════════════
+function isBossLesson(lessonId) {
+  return lessonId && lessonId.startsWith("boss_");
+}
+
+function getBossLevel() {
+  return (S.bossDefeated || []).length + 1;
+}
+
+function generateBossExercises(count) {
+  const exercises = [];
+  const usedQuestions = new Set();
+  const allLessons = LESSONS.filter((l) => !l.id.startsWith("boss_"));
+
+  while (exercises.length < count && exercises.length < allLessons.length * 6) {
+    const lesson = allLessons[Math.floor(Math.random() * allLessons.length)];
+    const pool = lesson.exercises.filter((e) =>
+      (e.type === "multiple" || e.type === "fillblank") && !usedQuestions.has(JSON.stringify(e))
+    );
+    if (pool.length > 0) {
+      const ex = pool[Math.floor(Math.random() * pool.length)];
+      usedQuestions.add(JSON.stringify(ex));
+      exercises.push({ ...ex, bossUnit: lesson.unit });
+    }
+  }
+  return exercises;
+}
+
+// ══════════════════════════════════════
+// SPACED REPETITION
+// ══════════════════════════════════════
+function getSpacedRepetitionExercises() {
+  const wrongWords = S.wrongWords || [];
+  const lowMastery = (S.vocab || []).filter((v) => (v.mastery || 0) < 2 && !v.online);
+  const words = [...new Set([...wrongWords.slice(-10), ...lowMastery.slice(-5).map((v) => v.word)])];
+  if (words.length === 0) return [];
+  return words.slice(0, 5).map((word) => {
+    const sw = SWAHILI[word.toLowerCase()] || "";
+    const others = Object.values(SWAHILI).filter((v) => v !== sw).sort(() => Math.random() - 0.5).slice(0, 3);
+    const options = [sw, ...others].sort(() => Math.random() - 0.5);
+    return {
+      type: "multiple",
+      question: "What does '" + word + "' mean in Swahili?",
+      options: options,
+      correct: options.indexOf(sw),
+      _spaced: true
+    };
+  });
+}
+
+// ══════════════════════════════════════
+// AI TUTOR
+// ══════════════════════════════════════
+function getAITip(exercise, unit) {
+  const answer = exercise.answer || (exercise.options ? exercise.options[exercise.correct] : "");
+  const sw = SWAHILI[answer.toLowerCase()] || "";
+  const tipKey = (unit || "").replace(/Unit \d+ - /, "").toLowerCase().split(" ")[0];
+  const tip = TUTOR_TIPS[tipKey] || TUTOR_TIPS.default[Math.floor(Math.random() * TUTOR_TIPS.default.length)];
+  let result = "The correct answer is " + answer;
+  if (sw) result += " (Swahili: " + sw + ")";
+  result += ". " + tip;
+  return result;
+}
+
+// ══════════════════════════════════════
+// FLYING COIN ANIMATION
+// ══════════════════════════════════════
+function spawnFlyingCoin(amount) {
+  const el = document.createElement("div");
+  el.className = "xp-float";
+  el.textContent = "+" + amount + " XP";
+  el.style.left = Math.random() * 60 + 20 + "%";
+  el.style.top = "40%";
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1000);
+}
+
+// ══════════════════════════════════════
+// COMEBACK REWARDS
+// ══════════════════════════════════════
+function checkComebackReward() {
+  if (!S.user) return;
+  const last = S.lastLogin || 0;
+  const now = Date.now();
+  const daysMissed = Math.floor((now - last) / 86400000);
+  if (daysMissed >= 1 && last > 0) {
+    const bonus = Math.min(50, daysMissed * 10);
+    S.stars += bonus;
+    toast("Welcome back! +" + bonus + " stars!", "ok");
+  }
+  S.lastLogin = now;
+  saveState();
+}
+
+// ══════════════════════════════════════
+// MASCOT REACTION
+// ══════════════════════════════════════
+function getMascotFace(correctStreak) {
+  if (correctStreak >= 5) return "🎉";
+  if (correctStreak >= 3) return "😄";
+  if (correctStreak > 0) return "😊";
+  return "🦁";
+}
+
+// ══════════════════════════════════════
 // TOAST
 // ══════════════════════════════════════
 function toast(message, type = "info") {
@@ -548,6 +838,11 @@ function showPage(page) {
     case "daily": renderDailyPage(); break;
     case "vocab": renderVocabPage(); break;
     case "speak": renderSpeakPage(); break;
+    case "friends": renderFriendsPage(); break;
+    case "avatars": renderAvatarPage(); break;
+    case "weekly": renderWeeklyPage(); break;
+    case "boss": renderBossPage(); break;
+    case "practicewords": renderPracticeWords(); break;
   }
 }
 
@@ -557,23 +852,45 @@ function showPage(page) {
 function renderHome() {
   const greeting = MSG.greet[Math.floor(Math.random() * MSG.greet.length)];
   const completedCount = Object.values(S.progress).filter((p) => p.completed).length;
+  resetWeeklyLeague();
+
+  // Mascot face based on recent performance
+  const mascotFace = getMascotFace(S._correctStreak || 0);
+
+  // Comeback banner
+  const last = S.lastLogin || 0;
+  const daysMissed = Math.floor((Date.now() - last) / 86400000);
+  const comebackHTML = (daysMissed >= 1 && last > 0)
+    ? '<div class="comeback-banner">🎉 Welcome back! You missed ' + daysMissed + ' day' + (daysMissed > 1 ? "s" : "") + '!</div>'
+    : "";
+
+  // League badge
+  const league = getLeague(S.weeklyXp || 0);
+
+  // Boss level check - every 10 lessons
+  const nextBossAt = (Math.floor(completedCount / 10) + 1) * 10;
+  const lessonsUntilBoss = nextBossAt - completedCount;
+  const bossHTML = (lessonsUntilBoss <= 3 && completedCount >= 10)
+    ? '<div class="practice-bar" style="background:linear-gradient(135deg,#FF4B4B,#CE82FF)"><div><b>🐉 Boss Level Soon!</b>'
+      + '<br><small style="opacity:.85">' + lessonsUntilBoss + ' lesson' + (lessonsUntilBoss > 1 ? "s" : "") + ' until boss</small></div>'
+      + '<button class="btn btn-sm" style="background:#fff;color:#FF4B4B" id="bossBtn">Fight</button></div>'
+    : "";
 
   // Build practice banner if weak areas exist
   const weakEntries = Object.entries(S.weakCategories || {})
     .filter(([, v]) => v > 0)
     .sort((a, b) => b[1] - a[1]);
 
-  const practiceHTML = weakEntries.length > 0
-    ? '<div class="practice-bar"><div><b>Practice Weak Areas</b>'
-      + '<br><small style="opacity:.85">'
-      + weakEntries[0][0].replace(/Unit \d+ - /, "")
-      + '</small></div>'
+  const practiceHTML = (weakEntries.length > 0 || (S.vocab || []).length >= 3)
+    ? '<div class="practice-bar"><div><b>📝 Practice Weak Words</b>'
+      + '<br><small style="opacity:.85">' + (S.wrongWords || []).length + ' wrong words to review</small></div>'
       + '<button class="btn btn-sm btn-blue" id="practiceBtn">Start</button></div>'
     : "";
 
-  // Build lesson map
+  // Build lesson map with connecting path
   const units = [...new Set(LESSONS.map((l) => l.unit))];
   let mapHTML = "";
+  let lessonIndex = 0;
 
   units.forEach((unit) => {
     const lessons = LESSONS.filter((l) => l.unit === unit);
@@ -583,36 +900,41 @@ function renderHome() {
       const progress = S.progress[lesson.id];
       const isCompleted = progress?.completed;
       const score = progress?.bestScore || 0;
-      const lessonIndex = LESSONS.findIndex((x) => x.id === lesson.id);
-      const prevCompleted = lessonIndex === 0 || S.progress[LESSONS[lessonIndex - 1].id]?.completed;
+      const idx = LESSONS.findIndex((x) => x.id === lesson.id);
+      const prevCompleted = idx === 0 || S.progress[LESSONS[idx - 1].id]?.completed;
       const isUnlocked = S.progress[lesson.id]?.unlocked;
       const isLocked = !isCompleted && !prevCompleted && !isUnlocked;
+      const isCurrent = !isCompleted && (prevCompleted || isUnlocked) && !isLocked;
+      const dotIdx = lessonIndex % 6;
+      lessonIndex++;
 
-      const dotClass = unit.includes("Greetings") ? "g"
-        : unit.includes("Basics") ? "b"
-        : unit.includes("People") ? "p"
-        : unit.includes("Nature") ? "o"
-        : unit.includes("Time") ? "r" : "pk";
+      const colors = ["g", "b", "p", "o", "r", "pk"];
+      const dotClass = colors[dotIdx];
 
-      mapHTML += '<div class="lcard ' + (isCompleted ? "done " : "") + (isLocked ? "locked" : "")
-        + '" data-id="' + lesson.id + '">'
+      const nodeClass = isCurrent ? "current" : (isCompleted ? "done" : "") + (isLocked ? " locked" : "");
+
+      mapHTML += '<div class="map-node ' + nodeClass + '" data-id="' + lesson.id + '">'
+        + '<div class="map-connector"></div>'
+        + '<div class="lcard ' + (isCompleted ? "done " : "") + (isLocked ? "locked" : "") + '" data-id="' + lesson.id + '">'
         + '<div class="lc-ic"><div class="lc-dot ' + dotClass + '"></div></div>'
-        + '<div class="lc-info"><h3>' + lesson.title + '</h3>'
+        + '<div class="lc-info"><h3>' + lesson.icon + ' ' + lesson.title + '</h3>'
         + '<p>' + lesson.exercises.length + ' exercises</p>'
         + (isCompleted ? '<div class="lc-pg"><div style="width:' + score + '%"></div></div>' : "")
         + '</div>'
         + '<span class="lc-st ' + (isCompleted ? "done" : (score > 0 ? "pct" : ""))
-        + '">' + (isCompleted ? score + "%" : (isLocked ? "🔒" : "▶")) + '</span>'
+        + '">' + (isCompleted ? score + "%" : (isLocked ? "🔒" : (isCurrent ? "▶" : "○"))) + '</span>'
+        + '</div>'
         + '</div>';
     });
   });
 
   // Render page
   M.innerHTML = ''
+    + comebackHTML
     + '<div class="mascot-row">'
-    +   '<div class="mascot-face">🦁</div>'
+    +   '<div class="mascot-face">' + mascotFace + '</div>'
     +   '<div class="mascot-speech"><b>' + greeting + '</b>'
-    +   '<p class="muted">Choose a lesson below!</p></div>'
+    +   '<p class="muted">' + getLevelName(S.xpLevel) + ' Level ' + S.xpLevel + ' • ' + league.icon + ' ' + league.name + ' League</p></div>'
     + '</div>'
     + '<div class="xp-row">'
     +   '<span class="xp-label">Lv.<b id="levelDisplay">' + S.xpLevel + '</b></span>'
@@ -621,14 +943,15 @@ function renderHome() {
     +   '<span class="xp-num" id="xpProgressText">' + S.xp + '/' + xpNeeded(S.xpLevel) + '</span>'
     +   '<button class="hdr-btn" id="dailyBtn"><i class="i-target"></i></button>'
     + '</div>'
+    + bossHTML
     + practiceHTML
     + '<div class="map">' + mapHTML + '</div>'
     + '<div class="home-nav">'
     +   '<button class="home-nav-btn" data-page="vocab"><i class="i-book"></i><span>Words</span></button>'
     +   '<button class="home-nav-btn" data-page="speak"><i class="i-target"></i><span>Speak</span></button>'
-    +   '<button class="home-nav-btn" data-page="profile"><i class="i-user"></i><span>Profile</span></button>'
+    +   '<button class="home-nav-btn" data-page="friends"><i class="i-user"></i><span>Friends</span></button>'
     +   '<button class="home-nav-btn" data-page="shop"><i class="i-shop"></i><span>Shop</span></button>'
-    +   '<button class="home-nav-btn" data-page="leaderboard"><i class="i-trophy"></i><span>League</span></button>'
+    +   '<button class="home-nav-btn" data-page="profile"><i class="i-user"></i><span>Profile</span></button>'
     + '</div>';
 
   // Bind events
@@ -646,16 +969,11 @@ function renderHome() {
   const dailyBtn = document.getElementById("dailyBtn");
   if (dailyBtn) dailyBtn.addEventListener("click", () => showPage("daily"));
 
+  const bossBtn = document.getElementById("bossBtn");
+  if (bossBtn) bossBtn.addEventListener("click", () => openBossLevel());
+
   const practiceBtn = document.getElementById("practiceBtn");
-  if (practiceBtn) {
-    practiceBtn.addEventListener("click", () => {
-      const topWeak = weakEntries[0];
-      if (topWeak) {
-        const lessons = LESSONS.filter((l) => l.unit === topWeak[0]);
-        if (lessons.length > 0) openLesson(lessons[0].id);
-      }
-    });
-  }
+  if (practiceBtn) practiceBtn.addEventListener("click", () => openPracticeMode());
 
   M.querySelectorAll(".home-nav-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -859,6 +1177,16 @@ function openLesson(lessonId) {
   const settings = getSettings();
   exerciseOrder = currentLesson.exercises.map((_, i) => i);
 
+  // Spaced repetition: inject wrong word exercises at the start
+  const spacedExercises = getSpacedRepetitionExercises();
+  if (spacedExercises.length > 0 && !isBossLesson(lessonId)) {
+    spacedExercises.forEach((ex) => {
+      currentLesson.exercises.unshift(ex);
+      exerciseOrder.unshift(currentLesson.exercises.length - 1);
+    });
+    exerciseOrder = currentLesson.exercises.map((_, i) => i);
+  }
+
   if (settings.shuffle) {
     for (let i = exerciseOrder.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -869,6 +1197,87 @@ function openLesson(lessonId) {
   exerciseIndex = 0;
   correctCount = 0;
   totalAttempts = 0;
+  S._correctStreak = 0;
+  S._lessonStart = Date.now();
+
+  // Track study time
+  S.lastStudyStart = Date.now();
+
+  renderExercise();
+}
+
+function openBossLevel() {
+  const bossNum = getBossLevel();
+  if ((S.bossDefeated || []).includes(bossNum)) {
+    toast("Boss already defeated!", "info");
+    return;
+  }
+
+  currentLesson = {
+    id: "boss_" + bossNum,
+    unit: "Boss Level",
+    title: "🐉 Boss Level " + bossNum,
+    icon: "🐉",
+    isBoss: true,
+    exercises: generateBossExercises(10)
+  };
+
+  if (currentLesson.exercises.length < 5) {
+    toast("Not enough exercises for boss level yet!", "err");
+    return;
+  }
+
+  exerciseOrder = currentLesson.exercises.map((_, i) => i);
+  exerciseIndex = 0;
+  correctCount = 0;
+  totalAttempts = 0;
+  S._correctStreak = 0;
+  S._lessonStart = Date.now();
+  S.lastStudyStart = Date.now();
+
+  renderExercise();
+}
+
+function openPracticeMode() {
+  const words = (S.wrongWords || []).slice(-10);
+  const lowMastery = (S.vocab || []).filter((v) => (v.mastery || 0) < 2 && !v.online).slice(-5);
+
+  if (words.length === 0 && lowMastery.length === 0) {
+    toast("No words to practice!", "info");
+    return;
+  }
+
+  const exercises = [];
+  [...words, ...lowMastery.map((v) => v.word)].slice(0, 8).forEach((word) => {
+    const sw = SWAHILI[word.toLowerCase()] || "";
+    const others = Object.values(SWAHILI).filter((v) => v !== sw).sort(() => Math.random() - 0.5).slice(0, 3);
+    const options = [sw, ...others].sort(() => Math.random() - 0.5);
+    exercises.push({
+      type: "multiple",
+      question: "What does '" + word + "' mean in Swahili?",
+      options: options,
+      correct: options.indexOf(sw)
+    });
+  });
+
+  if (exercises.length === 0) return;
+
+  currentLesson = {
+    id: "practice_" + Date.now(),
+    unit: "Practice",
+    title: "📝 Word Practice",
+    icon: "📝",
+    exercises: exercises
+  };
+
+  exerciseOrder = currentLesson.exercises.map((_, i) => i);
+  exerciseIndex = 0;
+  correctCount = 0;
+  totalAttempts = 0;
+  S._correctStreak = 0;
+  S._lessonStart = Date.now();
+  S.lastStudyStart = Date.now();
+
   renderExercise();
 }
 
@@ -906,12 +1315,13 @@ function renderExercise() {
 
   const total = currentLesson.exercises.length;
   const heartsStr = "❤️".repeat(S.hearts) + "🖤".repeat(Math.max(0, 5 - S.hearts));
+  const isBoss = currentLesson.isBoss;
 
   M.innerHTML = ''
     + '<div class="ex-screen">'
     +   '<div class="ex-header">'
     +     '<span class="ex-close" id="exBack">✕</span>'
-    +     '<span class="ex-prog">' + (exerciseIndex + 1) + '/' + total + '</span>'
+    +     '<span class="ex-prog">' + (isBoss ? "🐉 " : "") + (exerciseIndex + 1) + '/' + total + '</span>'
     +     '<div class="ex-hp">' + heartsStr + '</div>'
     +     '<span class="ex-timer" id="exTimer"></span>'
     +   '</div>'
@@ -919,16 +1329,19 @@ function renderExercise() {
     +   '<div class="ex-bottom">'
     +     '<div class="fb" id="exFB"></div>'
     +     '<button class="btn btn-green btn-block" id="exCheck" style="display:none">Check</button>'
-    +     '<button class="btn-flat" id="exSkip">Skip</button>'
+    +     (isBoss ? '' : '<button class="btn-flat" id="exSkip">Skip</button>')
     +   '</div>'
     + '</div>';
 
   document.getElementById("exBack").addEventListener("click", closeLesson);
-  document.getElementById("exSkip").addEventListener("click", () => {
-    stopTimer();
-    exerciseIndex++;
-    renderExercise();
-  });
+  const skipBtn = document.getElementById("exSkip");
+  if (skipBtn) {
+    skipBtn.addEventListener("click", () => {
+      stopTimer();
+      exerciseIndex++;
+      renderExercise();
+    });
+  }
   document.getElementById("exCheck").addEventListener("click", () => checkExercise(exercise));
 
   startTimer();
@@ -1207,13 +1620,14 @@ function checkExercise(exercise) {
     sndCorrect();
     S.stats.correct++;
     S.stars += 2;
+    S._correctStreak = (S._correctStreak || 0) + 1;
 
     // Track vocabulary
     const word = exercise.answer || exercise.options?.[exercise.correct] || exercise.audio || "";
     if (word) {
       const existing = S.vocab.find((v) => v.word === word);
       if (existing) {
-        existing.mastery = Math.min(3, (existing.mastery || 0) + 1);
+        existing.mastery = Math.min(5, (existing.mastery || 0) + 1);
       } else {
         S.vocab.push({
           word, sw: SWAHILI[word.toLowerCase()] || "",
@@ -1221,29 +1635,53 @@ function checkExercise(exercise) {
         });
       }
       S.stats.wordsLearned = S.vocab.length;
+
+      // Remove from wrongWords if mastered
+      if (existing && existing.mastery >= 3) {
+        S.wrongWords = (S.wrongWords || []).filter((w) => w !== word);
+      }
     }
 
-    addXP(10);
-    trackDaily("xp", 10);
+    const xpAmount = currentLesson.isBoss ? 20 : 10;
+    addXP(xpAmount);
+    trackDaily("xp", xpAmount);
+    trackDaily("words", 1);
+    trackWeeklyXp(xpAmount);
+    trackWeeklyChallenge("w_xp", xpAmount);
+    trackWeeklyChallenge("w_learn", 1);
     trackWeak(currentLesson.unit, false);
 
+    // Flying coin animation
+    spawnFlyingCoin(xpAmount);
+
     feedback.className = "fb show ok";
-    feedback.textContent = "✅ Correct! +10 XP";
+    feedback.textContent = "✅ Correct! +" + xpAmount + " XP";
   } else {
     sndWrong();
     S.stats.wrong++;
+    S._correctStreak = 0;
     trackWeak(currentLesson.unit, true);
+
+    // Track wrong word for spaced repetition
+    const wrongWord = exercise.answer || (exercise.options ? exercise.options[exercise.correct] : "");
+    if (wrongWord && !(S.wrongWords || []).includes(wrongWord)) {
+      if (!S.wrongWords) S.wrongWords = [];
+      S.wrongWords.push(wrongWord);
+    }
+
+    // AI Tutor tip
+    const tip = getAITip(exercise, currentLesson.unit);
 
     if (exercise.type === "multiple" || exercise.type === "listen" || exercise.type === "fillblank") {
       const answer = exercise.answer || (exercise.options ? exercise.options[exercise.correct] : "");
       feedback.className = "fb show fail";
-      feedback.textContent = "❌ " + (answer || "Wrong");
+      feedback.textContent = "❌ " + tip;
     } else if (exercise.type === "tap") {
       feedback.className = "fb show fail";
-      feedback.textContent = "❌ " + exercise.phrase;
+      feedback.textContent = "❌ " + exercise.phrase + ". " + tip;
     } else {
       feedback.className = "fb show fail";
-      feedback.textContent = "❌ Try to match all pairs";
+      feedback.textContent = "❌ Try to match all pairs. " + tip;
     }
 
     if (!loseHeart()) {
@@ -1308,10 +1746,44 @@ function startTimer() {
 // ── Finish Lesson ──
 function finishLesson() {
   stopTimer();
+  if (!currentLesson) return;
   const total = currentLesson.exercises.length;
   const pct = total > 0 ? Math.round((correctCount / total) * 100) : 0;
-  const xp = correctCount * 10;
+  const xp = correctCount * (currentLesson.isBoss ? 20 : 10);
   const isPerfect = pct >= 100;
+  const isBoss = currentLesson.isBoss;
+
+  // Track study time
+  const studyStart = S.lastStudyStart || Date.now();
+  const studyMins = Math.round((Date.now() - studyStart) / 60000);
+  S.studyMinutes = (S.studyMinutes || 0) + studyMins;
+  trackDaily("minutes", studyMins);
+
+  // Boss level: need 80% to pass
+  if (isBoss && pct < 80) {
+    S.stats.wrong += total - correctCount;
+    saveState();
+    M.innerHTML = ''
+      + '<div class="ex-screen" style="justify-content:center;text-align:center;padding:30px 20px">'
+      +   '<div style="font-size:3rem;margin-bottom:10px">💀</div>'
+      +   '<h2>Boss Defeated You!</h2>'
+      +   '<p class="muted">You got ' + pct + '% but need 80% to win</p>'
+      +   '<p class="muted">' + correctCount + '/' + total + ' correct</p>'
+      +   '<button class="btn btn-green btn-block" id="lessonOk">Try Again</button>'
+      + '</div>';
+    document.getElementById("lessonOk").addEventListener("click", () => openBossLevel());
+    return;
+  }
+
+  // Boss defeated!
+  if (isBoss) {
+    const bossNum = getBossLevel();
+    if (!S.bossDefeated) S.bossDefeated = [];
+    S.bossDefeated.push(bossNum);
+    S.stars += 50;
+    sndBoss();
+    toast("🐉 Boss " + bossNum + " defeated! +50 stars!", "ok");
+  }
 
   S.progress[currentLesson.id] = {
     completed: true,
@@ -1319,11 +1791,37 @@ function finishLesson() {
     at: Date.now()
   };
   S.stats.lessonsDone++;
+  if (!isBoss) S.bossLessons = (S.bossLessons || 0) + 1;
   S.stars += isPerfect ? 10 : 5;
   addXP(isPerfect ? xp + 20 : xp);
   markDay();
   trackDaily("lesson", 1);
-  if (isPerfect) trackDaily("perfect", 1);
+  trackDaily("perfect", isPerfect ? 1 : 0);
+  trackWeeklyChallenge("w_lessons", 1);
+
+  // Speed run badge
+  const elapsed = (Date.now() - (S._lessonStart || Date.now())) / 1000;
+  if (elapsed < 60 && !isBoss) {
+    const owned = S.badges || [];
+    if (!owned.find((b) => b.id === "speed_run")) {
+      S.badges.push({ id: "speed_run", at: Date.now() });
+      sndBadge();
+      toast("⏱️ Speed Run badge unlocked!", "ok");
+    }
+  }
+
+  // Night/Early lessons
+  const hour = new Date().getHours();
+  if (hour >= 21 || hour < 6) {
+    S.stats.nightLessons = (S.stats.nightLessons || 0) + 1;
+  }
+  if (hour >= 5 && hour < 8) {
+    S.stats.earlyLessons = (S.stats.earlyLessons || 0) + 1;
+  }
+
+  // Quest tracking
+  S.stats.questsDone = (S.stats.questsDone || 0);
+
   S.hearts = Math.min(5, S.hearts + 1);
   refreshHeartsDisplay();
   saveState();
@@ -1339,16 +1837,30 @@ function finishLesson() {
     }
   }
 
+  // Check all_lessons badge
+  const allDone = LESSONS.filter((l) => !l.id.startsWith("boss_")).every((l) => S.progress[l.id]?.completed);
+  if (allDone) {
+    const owned = S.badges || [];
+    if (!owned.find((b) => b.id === "all_lessons")) {
+      S.badges.push({ id: "all_lessons", at: Date.now() });
+      sndBadge();
+    }
+  }
+
   // Show result
+  const levelName = getLevelName(S.xpLevel);
+  const league = getLeague(S.weeklyXp || 0);
+
   M.innerHTML = ''
     + '<div class="ex-screen" style="justify-content:center;text-align:center;padding:30px 20px">'
-    +   '<div style="font-size:3rem;margin-bottom:10px">' + (isPerfect ? "💎" : "🎉") + '</div>'
-    +   '<h2>' + (isPerfect ? "Perfect Score!" : "Lesson Complete!") + '</h2>'
+    +   '<div class="result-icon">' + (isBoss ? "🐉" : (isPerfect ? "💎" : "🎉")) + '</div>'
+    +   '<h2>' + (isBoss ? "Boss Defeated!" : (isPerfect ? "Perfect Score!" : "Lesson Complete!")) + '</h2>'
     +   '<p class="muted">You earned ' + xp + ' XP!</p>'
+    +   '<div class="result-level">Lv. ' + S.xpLevel + ' ' + levelName + ' • ' + league.icon + ' ' + league.name + '</div>'
     +   '<div class="celeb-tags">'
     +     '<span class="xp-tag">✨ ' + xp + ' XP</span>'
     +     (isPerfect ? '<span class="badge-tag">💎 Perfect</span>' : "")
-    +     '<span class="star-tag">⭐ +' + (isPerfect ? 10 : 5) + '</span>'
+    +     '<span class="star-tag">⭐ +' + (isBoss ? 50 : (isPerfect ? 10 : 5)) + '</span>'
     +   '</div>'
     +   '<button class="btn btn-green btn-block" id="lessonOk">Continue</button>'
     + '</div>';
@@ -1361,12 +1873,17 @@ function finishLesson() {
 // ══════════════════════════════════════
 function renderProfile() {
   const roleName = { child: "Student", parent: "Parent", teacher: "Teacher" }[S.user?.role] || "";
+  const league = getLeague(S.weeklyXp || 0);
+  const levelName = getLevelName(S.xpLevel);
+  const avatar = S.avatar || {};
+  const pet = avatar.pet ? AVATARS.find((a) => a.id === avatar.pet) : null;
 
   M.innerHTML = ''
     + '<div class="prof-top">'
-    +   '<div class="avatar-circle lg orange">SS</div>'
+    +   '<div class="avatar-circle lg orange">' + (pet ? pet.icon : 'SS') + '</div>'
     +   '<h2>' + (S.user?.name || "Learner") + '</h2>'
-    +   '<small class="muted">' + roleName + '</small>'
+    +   '<small class="muted">' + roleName + ' • ' + levelName + ' Level ' + S.xpLevel + '</small>'
+    +   '<div style="margin-top:6px">' + league.icon + ' ' + league.name + ' League</div>'
     + '</div>'
     + '<div class="grid3">'
     +   '<div class="statbox"><div class="statbox-ic fire"><i class="i-fire"></i></div><b>' + S.streak + '</b><small>Streak</small></div>'
@@ -1376,6 +1893,11 @@ function renderProfile() {
     +   '<div class="statbox"><div class="statbox-ic blue"><i class="i-check"></i></div><b>' + S.stats.correct + '</b><small>Correct</small></div>'
     +   '<div class="statbox"><div class="statbox-ic pink"><i class="i-book"></i></div><b>' + S.vocab.length + '</b><small>Words</small></div>'
     + '</div>'
+    + '<div style="display:flex;gap:8px;margin-bottom:12px">'
+    +   '<button class="btn btn-outline btn-block btn-sm" id="goAvatars">🖼️ Avatar</button>'
+    +   '<button class="btn btn-outline btn-block btn-sm" id="goWeekly">📅 Weekly</button>'
+    +   '<button class="btn btn-outline btn-block btn-sm" id="goBoss">🐉 Boss</button>'
+    + '</div>'
     + '<div class="section"><h3>Badges</h3><div class="badge-row" id="badgeGrid"></div></div>'
     + '<div class="section"><h3>Weak Areas</h3><div id="weaknessList"></div></div>'
     + '<button class="btn btn-outline btn-block" id="backHome">← Back</button>';
@@ -1383,6 +1905,9 @@ function renderProfile() {
   renderBadges("badgeGrid");
   renderWeakAreas("weaknessList");
   document.getElementById("backHome").addEventListener("click", () => showPage("home"));
+  document.getElementById("goAvatars").addEventListener("click", () => showPage("avatars"));
+  document.getElementById("goWeekly").addEventListener("click", () => showPage("weekly"));
+  document.getElementById("goBoss").addEventListener("click", () => showPage("boss"));
 }
 
 // ══════════════════════════════════════
@@ -1394,7 +1919,8 @@ function renderShop() {
     + '<p class="muted">Use stars to buy items</p>'
     + '<div class="shop-coins"><b>' + S.stars + '</b> stars</div>'
     + '<div class="shop-list" id="shopGrid"></div>'
-    + '<button class="btn btn-outline btn-block" style="margin-top:12px" id="backHome">← Back</button>';
+    + '<div style="margin-top:12px"><button class="btn btn-blue btn-block" id="goAvatarShop">🖼️ Avatar Shop</button></div>'
+    + '<button class="btn btn-outline btn-block" style="margin-top:8px" id="backHome">← Back</button>';
 
   const grid = document.getElementById("shopGrid");
   grid.innerHTML = SHOP.map((item) => {
@@ -1437,6 +1963,7 @@ function renderShop() {
   });
 
   document.getElementById("backHome").addEventListener("click", () => showPage("home"));
+  document.getElementById("goAvatarShop").addEventListener("click", () => showPage("avatars"));
 }
 
 // ══════════════════════════════════════
@@ -1445,18 +1972,26 @@ function renderShop() {
 function renderLeaderboard() {
   const users = getUsers();
   const list = Object.values(users)
-    .map((u) => ({ name: u.name, xp: u.stats?.xp || 0 }))
+    .map((u) => ({ name: u.name, xp: u.stats?.xp || 0, streak: u.streak || 0, words: u.vocab?.length || 0 }))
     .sort((a, b) => b.xp - a.xp);
 
+  const league = getLeague(S.weeklyXp || 0);
+
   M.innerHTML = ''
-    + '<h2>Leaderboard</h2>'
-    + '<p class="muted">Top learners</p>'
+    + '<h2>🏆 Leaderboard</h2>'
+    + '<div style="text-align:center;padding:12px;background:var(--c);border-radius:var(--R);margin:12px 0;box-shadow:var(--sh);border:2px solid ' + league.color + '">'
+    +   '<span style="font-size:2rem">' + league.icon + '</span>'
+    +   '<div style="font-weight:700">' + league.name + ' League</div>'
+    +   '<div style="font-size:.75rem;color:var(--t2)">' + (S.weeklyXp || 0) + ' XP this week</div>'
+    + '</div>'
+    + '<p class="muted">All-time rankings</p>'
     + '<ol class="league">'
     + list.map((r, i) => {
       const isMe = r.name === S.user?.name;
+      const rLeague = getLeague(r.xp);
       return '<li>'
         + '<span class="league-rank">#' + (i + 1) + '</span>'
-        + '<span class="league-name">' + r.name + (isMe ? " (you)" : "") + '</span>'
+        + '<span class="league-name">' + rLeague.icon + ' ' + r.name + (isMe ? " (you)" : "") + '</span>'
         + '<span class="league-xp">' + r.xp + ' XP</span>'
         + '</li>';
     }).join("")
@@ -1519,7 +2054,12 @@ function renderSettings() {
           hearts: fresh.hearts, heartsRegen: fresh.heartsRegen,
           vocab: fresh.vocab, badges: fresh.badges, dailyActivity: fresh.dailyActivity,
           streakFreeze: fresh.streakFreeze, daily: fresh.daily,
-          weakCategories: fresh.weakCategories, wrongWords: fresh.wrongWords, placed: fresh.placed
+          weakCategories: fresh.weakCategories, wrongWords: fresh.wrongWords, placed: fresh.placed,
+          friends: fresh.friends, ownedAvatars: fresh.ownedAvatars, avatar: fresh.avatar,
+          weeklyXp: fresh.weeklyXp, lastWeekReset: fresh.lastWeekReset,
+          weeklyChallenge: fresh.weeklyChallenge, bossDefeated: fresh.bossDefeated,
+          bossLessons: fresh.bossLessons, lastLogin: fresh.lastLogin,
+          studyMinutes: fresh.studyMinutes, lastStudyStart: fresh.lastStudyStart
         };
         saveUsers(users);
       }
@@ -1816,6 +2356,232 @@ function scheduleDailyReminder() {
 }
 
 // ══════════════════════════════════════
+// FRIENDS PAGE
+// ══════════════════════════════════════
+function renderFriendsPage() {
+  const users = getUsers();
+  const friends = S.friends || [];
+
+  M.innerHTML = ''
+    + '<h2>Friends</h2>'
+    + '<p class="muted">Add friends and compare progress</p>'
+    + '<div style="display:flex;gap:8px;margin:12px 0">'
+    +   '<input type="text" id="friendInput" placeholder="Enter friend name..." style="flex:1;padding:10px;border:2px solid var(--bd);border-radius:var(--Rs);font-size:.85rem;background:var(--bg)"/>'
+    +   '<button class="btn btn-green btn-sm" id="addFriendBtn">Add</button>'
+    + '</div>'
+    + '<div id="friendList"></div>'
+    + '<button class="btn btn-outline btn-block" style="margin-top:12px" id="backHome">← Back</button>';
+
+  const list = document.getElementById("friendList");
+
+  function renderFriendList() {
+    if (friends.length === 0) {
+      list.innerHTML = '<div class="no-weak">No friends yet! Add someone above.</div>';
+      return;
+    }
+    list.innerHTML = friends.map((name) => {
+      const u = users[name];
+      if (!u) return '<div class="weak-item"><div class="weak-info"><strong>' + name + '</strong><small>Not found</small></div></div>';
+      const league = getLeague(u.stats?.xp || 0);
+      return '<div class="weak-item">'
+        + '<div style="font-size:1.4rem">' + league.icon + '</div>'
+        + '<div class="weak-info"><strong>' + name + '</strong>'
+        + '<small>🔥 ' + (u.streak || 0) + ' streak • ⭐ ' + (u.stats?.xp || 0) + ' XP • 📝 ' + (u.vocab?.length || 0) + ' words</small></div>'
+        + '<button class="btn btn-sm btn-outline" style="color:var(--r);border-color:var(--r)" data-remove="' + name + '">✕</button>'
+        + '</div>';
+    }).join("");
+
+    list.querySelectorAll("[data-remove]").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const idx = friends.indexOf(btn.dataset.remove);
+        if (idx >= 0) { friends.splice(idx, 1); S.friends = friends; saveState(); renderFriendList(); }
+      });
+    });
+  }
+
+  renderFriendList();
+
+  document.getElementById("addFriendBtn").addEventListener("click", () => {
+    const name = document.getElementById("friendInput").value.trim();
+    if (!name) return;
+    if (name === S.user?.name) { toast("Can't add yourself!", "err"); return; }
+    if (friends.includes(name)) { toast("Already friends!", "info"); return; }
+    if (!users[name]) { toast("User not found!", "err"); return; }
+    friends.push(name);
+    S.friends = friends;
+    saveState();
+    document.getElementById("friendInput").value = "";
+    renderFriendList();
+    toast(name + " added as friend! 👫", "ok");
+  });
+
+  document.getElementById("backHome").addEventListener("click", () => showPage("home"));
+}
+
+// ══════════════════════════════════════
+// AVATAR SHOP PAGE
+// ══════════════════════════════════════
+function renderAvatarPage() {
+  const owned = S.ownedAvatars || [];
+  const avatar = S.avatar || { frame: null, pet: null, bg: null };
+
+  M.innerHTML = ''
+    + '<h2>Avatar Shop</h2>'
+    + '<p class="muted">Customize your profile</p>'
+    + '<div class="shop-coins"><b>' + S.stars + '</b> stars</div>'
+    + '<div id="avatarGrid"></div>'
+    + '<h3 style="margin-top:16px">Your Items</h3>'
+    + '<div id="ownedItems"></div>'
+    + '<button class="btn btn-outline btn-block" style="margin-top:12px" id="backHome">← Back</button>';
+
+  const grid = document.getElementById("avatarGrid");
+  const types = ["frame", "pet", "bg"];
+
+  types.forEach((type) => {
+    const items = AVATARS.filter((a) => a.type === type);
+    const typeLabel = type === "frame" ? "🖼️ Frames" : (type === "pet" ? "🐾 Pets" : "🎨 Backgrounds");
+    grid.innerHTML += '<h3 style="margin:12px 0 8px">' + typeLabel + '</h3>'
+      + items.map((item) => {
+        const isOwned = owned.includes(item.id);
+        const isActive = avatar[type] === item.id;
+        return '<div class="shop-item" data-id="' + item.id + '">'
+          + '<div class="shop-ic" style="background:' + (item.color || 'var(--b)') + '">' + item.icon + '</div>'
+          + '<div class="shop-info"><b>' + item.name + '</b><small>' + (isOwned ? (isActive ? "✅ Equipped" : "Tap to equip") : item.cost + ' stars') + '</small></div>'
+          + '<span class="shop-cost">' + (isOwned ? (isActive ? "Equipped" : "Owned") : "⭐ " + item.cost) + '</span>'
+          + '</div>';
+      }).join("");
+  });
+
+  grid.querySelectorAll(".shop-item").forEach((el) => {
+    el.addEventListener("click", () => {
+      const item = AVATARS.find((a) => a.id === el.dataset.id);
+      if (!item) return;
+      if (owned.includes(item.id)) {
+        avatar[item.type] = avatar[item.type] === item.id ? null : item.id;
+        S.avatar = avatar;
+        saveState();
+        renderAvatarPage();
+        toast(item.name + (avatar[item.type] === item.id ? " equipped!" : " unequipped"), "ok");
+      } else {
+        if (S.stars < item.cost) { toast("Not enough stars!", "err"); return; }
+        S.stars -= item.cost;
+        owned.push(item.id);
+        S.ownedAvatars = owned;
+        avatar[item.type] = item.id;
+        S.avatar = avatar;
+        saveState();
+        renderAvatarPage();
+        toast(item.name + " purchased! 🎉", "ok");
+      }
+    });
+  });
+
+  // Show owned items
+  const ownedEl = document.getElementById("ownedItems");
+  if (owned.length === 0) {
+    ownedEl.innerHTML = '<div class="no-weak">No items yet!</div>';
+  } else {
+    ownedEl.innerHTML = owned.map((id) => {
+      const item = AVATARS.find((a) => a.id === id);
+      if (!item) return "";
+      const isActive = avatar[item.type] === id;
+      return '<div class="vocab-item" style="cursor:pointer" data-equip="' + id + '">'
+        + '<span class="vi-icon">' + item.icon + '</span>'
+        + '<div class="vi-info"><div class="vi-en">' + item.name + '</div>'
+        + '<div class="vi-sw">' + (isActive ? "✅ Equipped" : "Tap to equip") + '</div></div>'
+        + '</div>';
+    }).join("");
+
+    ownedEl.querySelectorAll("[data-equip]").forEach((el) => {
+      el.addEventListener("click", () => {
+        const item = AVATARS.find((a) => a.id === el.dataset.equip);
+        if (!item) return;
+        avatar[item.type] = avatar[item.type] === item.id ? null : item.id;
+        S.avatar = avatar;
+        saveState();
+        renderAvatarPage();
+      });
+    });
+  }
+
+  document.getElementById("backHome").addEventListener("click", () => showPage("home"));
+}
+
+// ══════════════════════════════════════
+// WEEKLY CHALLENGES PAGE
+// ══════════════════════════════════════
+function renderWeeklyPage() {
+  resetWeeklyLeague();
+  const weekly = S.weeklyChallenge || {};
+
+  M.innerHTML = ''
+    + '<h2>Weekly Challenges</h2>'
+    + '<p class="muted">Complete challenges for bonus rewards</p>'
+    + '<div class="shop-coins" style="margin:12px 0"><b>' + (S.weeklyXp || 0) + '</b> XP this week</div>'
+    + WEEKLY_CHALLENGES.map((ch) => {
+      const current = weekly[ch.id] || 0;
+      const done = current >= ch.need;
+      const pct = Math.min(100, Math.round((current / ch.need) * 100));
+      return '<div style="padding:14px;background:var(--c);border-radius:var(--R);margin-bottom:8px;box-shadow:var(--sh);border-left:4px solid ' + (done ? 'var(--g)' : 'var(--bd)') + '">'
+        + '<div style="display:flex;align-items:center;gap:10px">'
+        + '<span style="font-size:1.4rem">' + ch.icon + '</span>'
+        + '<div style="flex:1"><strong style="font-size:.85rem">' + ch.label + '</strong>'
+        + '<br><small style="font-size:.7rem;color:var(--t2)">' + current + ' / ' + ch.need + '</small>'
+        + '<div class="lc-pg" style="margin-top:6px"><div style="width:' + pct + '%"></div></div>'
+        + '</div>'
+        + '<span style="font-size:1.2rem">' + (done ? "✅" : "") + '</span>'
+        + '</div></div>';
+    }).join("")
+    + '<div style="margin-top:12px"><h3>This Week\'s League</h3>'
+    + LEAGUES.slice().reverse().map((l) => {
+      const isActive = getLeague(S.weeklyXp || 0).id === l.id;
+      return '<div style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--c);border-radius:var(--R);margin-bottom:6px;box-shadow:var(--sh);border:2px solid ' + (isActive ? l.color : 'transparent') + '">'
+        + '<span style="font-size:1.4rem">' + l.icon + '</span>'
+        + '<div style="flex:1"><strong>' + l.name + '</strong><br><small style="color:var(--t2)">' + l.minXP + '+ XP</small></div>'
+        + (isActive ? '<span style="color:var(--g);font-weight:700">YOU</span>' : '')
+        + '</div>';
+    }).join("") + '</div>'
+    + '<button class="btn btn-outline btn-block" style="margin-top:12px" id="backHome">← Back</button>';
+
+  document.getElementById("backHome").addEventListener("click", () => showPage("home"));
+}
+
+// ══════════════════════════════════════
+// BOSS LEVEL PAGE
+// ══════════════════════════════════════
+function renderBossPage() {
+  const bossNum = getBossLevel();
+  const defeated = S.bossDefeated || [];
+
+  M.innerHTML = ''
+    + '<h2>🐉 Boss Levels</h2>'
+    + '<p class="muted">Defeat bosses every 10 lessons</p>'
+    + '<div style="margin:12px 0">'
+    + 'Boss ' + bossNum + ': ' + (defeated.includes(bossNum) ? '✅ Defeated' : '⚔️ Waiting')
+    + '</div>'
+    + '<p class="muted">Boss levels have 10 hard questions. No skipping! You need 80% to win.</p>'
+    + '<p class="muted">Boss ' + bossNum + ' unlocked after ' + (bossNum * 10) + ' lessons. (' + S.stats.lessonsDone + ' done)</p>'
+    + (S.stats.lessonsDone >= bossNum * 10 && !defeated.includes(bossNum)
+      ? '<button class="btn btn-green btn-block" id="startBoss">⚔️ Fight Boss!</button>'
+      : '<button class="btn btn-outline btn-block" disabled>Complete more lessons to unlock</button>')
+    + '<button class="btn btn-outline btn-block" style="margin-top:8px" id="backHome">← Back</button>';
+
+  const startBtn = document.getElementById("startBoss");
+  if (startBtn && !defeated.includes(bossNum)) {
+    startBtn.addEventListener("click", () => openBossLevel());
+  }
+  document.getElementById("backHome").addEventListener("click", () => showPage("home"));
+}
+
+// ══════════════════════════════════════
+// PRACTICE WORDS PAGE
+// ══════════════════════════════════════
+function renderPracticeWords() {
+  openPracticeMode();
+}
+
+// ══════════════════════════════════════
 // AUTH
 // ══════════════════════════════════════
 function login(name, role) {
@@ -1853,6 +2619,9 @@ function login(name, role) {
   setTimeout(() => { if (settings.notif) scheduleDailyReminder(); }, 2000);
 
   showPage("home");
+
+  // Comeback rewards
+  checkComebackReward();
 
   if (!S.placed) {
     setTimeout(startPlacement, 600);
@@ -1904,6 +2673,21 @@ function init() {
         if (u.wrongWords === undefined) u.wrongWords = [];
         if (u.placed === undefined) u.placed = false;
         if (u.daily === undefined) u.daily = {};
+        if (u.friends === undefined) u.friends = [];
+        if (u.ownedAvatars === undefined) u.ownedAvatars = [];
+        if (u.avatar === undefined) u.avatar = { frame: null, pet: null, bg: null };
+        if (u.weeklyXp === undefined) u.weeklyXp = 0;
+        if (u.lastWeekReset === undefined) u.lastWeekReset = 0;
+        if (u.weeklyChallenge === undefined) u.weeklyChallenge = {};
+        if (u.bossDefeated === undefined) u.bossDefeated = [];
+        if (u.bossLessons === undefined) u.bossLessons = 0;
+        if (u.lastLogin === undefined) u.lastLogin = 0;
+        if (u.studyMinutes === undefined) u.studyMinutes = 0;
+        if (u.lastStudyStart === undefined) u.lastStudyStart = 0;
+        if (u.stats && u.stats.perfectLessons === undefined) u.stats.perfectLessons = 0;
+        if (u.stats && u.stats.nightLessons === undefined) u.stats.nightLessons = 0;
+        if (u.stats && u.stats.earlyLessons === undefined) u.stats.earlyLessons = 0;
+        if (u.stats && u.stats.questsDone === undefined) u.stats.questsDone = 0;
         if (Array.isArray(u.vocab)) {
           u.vocab = u.vocab.map((v) => {
             if (v && !v.word && v.en) {
